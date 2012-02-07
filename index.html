@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Raphael · Drag-n-drop</title>
+        
+		<script src="raphael.js"></script>
+        
+		<script>
+            window.onload = function () {
+				var cellSize = 25;
+				
+                var R = Raphael(0, 0, "100%", "100%"),
+                    r = R.circle(100, 100, 50).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5}); /*,
+                    g = R.circle(210, 100, 50).attr({fill: "hsb(.3, 1, 1)", stroke: "none", opacity: .5}),
+                    b = R.circle(320, 100, 50).attr({fill: "hsb(.6, 1, 1)", stroke: "none", opacity: .5}),
+                    p = R.circle(430, 100, 50).attr({fill: "hsb(.8, 1, 1)", stroke: "none", opacity: .5});*/
+					
+                var start = function () {
+                    this.ox = this.attr("cx");
+                    this.oy = this.attr("cy");
+                    //this.animate({r: 70, opacity: .25}, 500, ">");
+                },
+				
+                move = function (dx, dy) {
+					var x = Math.floor((this.ox + dx) / cellSize) * cellSize, y = Math.floor((this.oy + dy) / cellSize) * cellSize;
+                    this.attr({cx: x, cy: y});
+                },
+				
+                up = function () {
+                    //this.animate({r: 50, opacity: .5}, 500, ">");
+                };
+				
+                //R.set(r, g, b, p).drag(move, start, up);
+				r.drag(move, start, up);
+            };
+        </script>
+    </head>
+	
+    <body>
+        <div id="holder"></div>
+    </body>
+</html>
