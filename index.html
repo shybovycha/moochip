@@ -32,14 +32,14 @@
                 this.name = name || 'unnamed_component';
 
                 this.trigger = function(pin, i, u) {
-                    console.log(this.type, this.name);
-                    
                     var a = [];
 
                     for (var i = 0; i < this.pins.length; i++) {
                         if (this.pins[i] != pin)
                             a.push(this.pins[i]);
                     }
+
+                    console.log(this.type, this.name, ' triggered on ', pin.name, ' pin. Result: ', a);
 
                     return a;
                 }
@@ -93,24 +93,43 @@
             Cs[0].pin('cathode').connect(Cs[1].pin('negative'));*/
 
             function MOO(SRC) {
-                var q = SRC.pin('positive').connections, FL = false;
+                var q = SRC.pin('positive').connections, FL = false, CNTRFL = false;
 
                 console.log(q);
 
                 while (q.length > 0) {
-                    console.log(q);
+                    if (CNTRFL) {
+                        console.log('FREEZING DETECTED!');
+                        break;
+                    }
+
+                    //console.log(q);
 
                     var p = q.shift();
 
                     var res = p.component.trigger(p, 1, 1);
 
+                    //console.log('RES:', res, 'FL:', FL);
+
                     if (!FL) {
-                        q.concat(res);
+                        q = q.concat(res);
                     }
 
                     for (var i = 0; i < q.length; i++) {
-                        if (i.component == SRC)
+                        if (q[i].component == SRC && q[i].name == 'negative') {
                             FL = true;
+                            console.log(p.component.name, ' invoke caused negative source pin appear');
+                        }
+
+                        for (var t = 0; t < q.length; t++) {
+                            if (i == t)
+                                continue;
+
+                            if (q[i] == q[t]) {
+                                CNTRFL = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
