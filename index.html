@@ -38,7 +38,7 @@
 					invoke: function(pin, i, u) {
 					},
 					
-					conduction: function(pinA, pinB) {
+					conduction: function(pinB) {
 					},
 
 					pin: function(name) {
@@ -78,7 +78,7 @@
 					}
 				}
 				
-				tmp.conduction = function(pinA, pinB) {
+				tmp.conduction = function(pinB) {
 					return true;
 				}
 				
@@ -104,7 +104,7 @@
 					}
 				}
 				
-				tmp.conduction = function(pinA, pinB) {
+				tmp.conduction = function(pinB) {
 					if (pinB.name == 'cathode')
 						return true; else
 							return false;
@@ -130,7 +130,7 @@
 					}
 				}
 				
-				tmp.conduction = function(pinA, pinB) {
+				tmp.conduction = function(pinB) {
 					return true;
 				}
 				
@@ -186,15 +186,19 @@
 									stopFlag++;
 							}
 							
-							var p = q.shift(), p1 = p.component.pins;
+							var p = q.shift();
 							
 							p.src = 'negative';
 							
-							for (var t = 0; t < p1.length; t++) {
-								var p2 = p1[t];
+							for (var i = 0; i < p.component.pins.length; i++) {
+								var p2 = p.component.pins[i];
 								
-								if (p != p2 && p.component != src && p.component.conduction(p2))
-									p2.src = 'negative';
+								if (p != p2 && p.component != src && p2.component.conduction(p)) {
+									for (var t = 0; t < p2.connections.length; t++) {
+										q.push(p2.connections[t]);
+										//p2.connections[t].src = 'negative';
+									}
+								}
 							}
 						}
 					}
