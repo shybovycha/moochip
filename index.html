@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <title>Raphael · Drag-n-drop</title>
+        <meta charset="utf-8" />
+        <title>Raphael :: Drag-n-drop</title>
         
 		<script src="raphael.js"></script>
         
@@ -28,21 +28,15 @@
             function Component(type, name)
             {
                 this.pins = [];
+				
                 this.type = type;
                 this.name = name || 'unnamed_component';
 
-                this.trigger = function(pin, i, u) {
-                    var a = [];
-
-                    for (var i = 0; i < this.pins.length; i++) {
-                        if (this.pins[i] != pin)
-                            a.push(this.pins[i]);
-                    }
-
-                    console.log(this.type, this.name, ' triggered on ', pin.name, ' pin. Result: ', a);
-
-                    return a;
+                this.invoke = function(pin, i, u) {
                 }
+				
+				this.conduction = function(pinA, pinB) {
+				}
 
                 this.pin = function(name) {
                     for (var i = 0; i < this.pins.length; i++) {
@@ -53,89 +47,181 @@
                     return null;
                 }
             }
-
-            var Cs = [];
-
-            var a = new Component('led', 'VD1');
-            a.pins.push(new Pin(a, 'anode'));
-            a.pins.push(new Pin(a, 'cathode'));
-            Cs.push(a);
-
-            var a = new Component('resistor', 'R1');
-            a.pins.push(new Pin(a, 'a'));
-            a.pins.push(new Pin(a, 'b'));
-            Cs.push(a);
-
-            var a = new Component('dc_src', 'SRC1');
-            a.pins.push(new Pin(a, 'positive'));
-            a.pins.push(new Pin(a, 'negative'));
-            Cs.push(a);
-
-            var a = new Component('connector', '-');
-            a.pins.push(new Pin(a, 'a'));
-            a.pins.push(new Pin(a, 'b'));
-            a.pins.push(new Pin(a, 'c'));
-            a.pin('a').connect(Cs[0].pin('anode'));
-            a.pin('b').connect(Cs[1].pin('a'));
-            a.pin('c').connect(Cs[2].pin('positive'));
-            Cs.push(a);
-
-            var a = new Component('connector', '-');
-            a.pins.push(new Pin(a, 'a'));
-            a.pins.push(new Pin(a, 'b'));
-            a.pins.push(new Pin(a, 'c'));
-            a.pin('a').connect(Cs[0].pin('cathode'));
-            a.pin('b').connect(Cs[1].pin('b'));
-            a.pin('c').connect(Cs[2].pin('negative'));
-            Cs.push(a);
-
-            /*Cs[0].pin('anode').connect(Cs[1].pin('positive'));
-            Cs[0].pin('cathode').connect(Cs[1].pin('negative'));*/
-
-            function MOO(SRC) {
-                var q = SRC.pin('positive').connections, FL = false, CNTRFL = false;
-
-                console.log(q);
-
-                while (q.length > 0) {
-                    if (CNTRFL) {
-                        console.log('FREEZING DETECTED!');
-                        break;
-                    }
-
-                    //console.log(q);
-
-                    var p = q.shift();
-
-                    var res = p.component.trigger(p, 1, 1);
-
-                    //console.log('RES:', res, 'FL:', FL);
-
-                    if (!FL) {
-                        q = q.concat(res);
-                    }
-
-                    for (var i = 0; i < q.length; i++) {
-                        if (q[i].component == SRC && q[i].name == 'negative') {
-                            FL = true;
-                            console.log(p.component.name, ' invoke caused negative source pin appear');
-                        }
-
-                        for (var t = 0; t < q.length; t++) {
-                            if (i == t)
-                                continue;
-
-                            if (q[i] == q[t]) {
-                                CNTRFL = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            MOO(Cs[2]);
+			</script>
+			
+			<script type="text/javascript">
+			Resistor = function(name, r) {
+				this.name = name;
+				this.R = r;
+				
+				this.pins.push(new Pin(this, 'a'));
+				this.pins.push(new Pin(this, 'b'));
+			}
+			
+			Resistor.prototype = new Component('resistor');
+			
+			Resistor.prototype.invoke = function(pin, i, u) {
+				if (pin == this.pin('a') && this.pin('b').src == 'negative') {
+					this.pin('b').i = i;
+					this.pin('b').u = u;
+					
+					console.log(this.name, '!');
+				} else
+				if (pin == this.pin('b') && this.pin('a').src == 'negative') {
+					this.pin('a').i = i;
+					this.pin('a').u = u;
+					
+					console.log(this.name, '!');
+				}
+			}
+			
+			Resistor.prototype.conduction = function(pinA, pinB) {
+				return true;
+			}
+			</script>
+			
+			<script type="text/javascript">
+			Diode = function(name) {
+				this.name = name;
+				
+				this.pins.push(new Pin(this, 'anode'));
+				this.pins.push(new Pin(this, 'cathode'));
+			}
+			
+			Diode.prototype = new Component('diode');
+			
+			Diode.prototype.invoke = function(pin, i, u) {
+				if (pin == this.pin('anode') && this.pin('cathode').src == 'negative') {
+					this.pin('cathode').i = i;
+					this.pin('cathode').u = u;
+					
+					console.log(this.name, '!');
+				}
+			}
+			
+			Diode.prototype.conduction = function(pinA, pinB) {
+				if (pinB.name == 'cathode')
+					return true; else
+						return false;
+			}
+			</script>
+			
+			<script type="text/javascript">
+			Wire = function(name) {
+				this.name = name;
+			}
+			
+			Wire.prototype = new Component('wire');
+			
+			Wire.prototype.invoke = function(pin, i, u) {
+				for (var i = 0; i < this.pins.length; i++) {
+					if (this.pins[i] == pin)
+						continue;
+						
+					this.pins[i].i = i;
+					this.pins[i].u = u;
+				}
+			}
+			
+			Wire.prototype.conduction = function(pinA, pinB) {
+				return true;
+			}
+			
+			Wire.prototype.connect = function(pin) {
+				console.log(this);
+				
+				var lastPin = this.pins[this.pins.length - 1], N = (parseInt(lastPin ? lastPin.name : 0)) + 1, p = new Pin(this, N);
+				p.connect(pin);
+				this.pins.push(p);
+				return p;
+			}
+			</script>
+			
+			<script type="text/javascript">
+			function Scheme() {
+				this.components = [];
+				
+				this.add = function(component) {
+					this.components.push(component);
+				}
+				
+				this.component = function(name, type) {
+					for (var i = 0; i < this.components.length; i++) {
+						var c = this.components[i];
+						
+						if (this.name && this.type) {
+							if (c.name == name && c.type == type)
+								return c;
+						} else
+						if (this.type) {
+							if (c.type == type)
+								return c;
+						} else {
+							if (c.name == name)
+								return c;
+						}
+					}
+				}
+				
+				this.run = function(src) {
+					if (!src)
+						src = this.component(0, 'dc_source');
+						
+					var q = src.pin('negative').connections, stopFlag = 0, controlFlag = src.pin('positive').connections.length;
+					
+					while (q.length > 0) {
+						if (stopFlag > controlFlag)
+							break;
+							
+						for (var i = 0; i < q.length; i++) {
+							if (q[i] == src.pin('positive'))
+								stopFlag++;
+						}
+						
+						var p = q.shift();
+						
+						p.src = 'negative';
+						
+						for (var t = 0; t < p2.length; t++) {
+							var p2 = p.component.pins[t];
+							
+							if (p != p2 && p.component != src && p.component.conduction(p2))
+								p2.src = 'negative';
+						}
+					}
+				}
+			}
         </script>
+		
+		<script type="text/javascript">
+		var Cs = new Scheme();
+		
+		var a = new Component('dc_source', 'src1');
+		a.pins.push(new Pin(a, 'positive'));
+		a.pins.push(new Pin(a, 'negative'));
+		Cs.add(a);
+		
+		var a = new Resistor('r1', 1);
+		Cs.add(a);
+		
+		var a = new Diode('vd1');
+		Cs.add(a);
+		
+		var a = new Wire('-1');
+		Cs.add(a);
+		
+		var a = new Wire('-2');
+		Cs.add(a);
+		
+		Cs.component('-1').connect(Cs.component('vd1').pin('anode'));
+		Cs.component('-2').connect(Cs.component('vd1').pin('cathode'));
+		
+		Cs.component('-1').connect(Cs.component('src1').pin('positive'));
+		Cs.component('-1').connect(Cs.component('r1').pin('a'));
+		
+		Cs.component('-2').connect(Cs.component('src1').pin('negative'));
+		Cs.component('-2').connect(Cs.component('r1').pin('b'));
+		</script>
 
         <script type="text/javascript">
             window.onload = function () {
