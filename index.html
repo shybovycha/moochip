@@ -35,7 +35,7 @@
 					type: type,
 					name: name || 'unnamed_component',
 
-					invoke: function(pin, i, u) {
+					invoke: function(pin, I, U) {
 					},
 					
 					conduction: function(pinB) {
@@ -54,27 +54,27 @@
 			</script>
 			
 			<script type="text/javascript">
-			Resistor = function(name, r) {
+			Resistor = function(name, R) {
 				var tmp = new Component('resistor');
 				
 				tmp.name = name;
-				tmp.R = r;
+				tmp.R = R;
 				
 				tmp.pins.push(new Pin(tmp, 'a'));
 				tmp.pins.push(new Pin(tmp, 'b'));
 				
-				tmp.invoke = function(pin, i, u) {
-					if (pin == tmp.pin('a') && tmp.pin('b').src == 'negative') {
-						tmp.pin('b').i = i;
-						tmp.pin('b').u = u;
+				tmp.invoke = function(pin, I, U) {
+					if (pin == this.pin('a') && this.pin('b').src == 'negative') {
+						this.pin('b').i = I;
+						this.pin('b').u = U;
 						
-						console.log(tmp.name, '!');
+						console.log(this.name, '!');
 					} else
-					if (pin == tmp.pin('b') && tmp.pin('a').src == 'negative') {
-						tmp.pin('a').i = i;
-						tmp.pin('a').u = u;
+					if (pin == this.pin('b') && this.pin('a').src == 'negative') {
+						this.pin('a').i = I;
+						this.pin('a').u = U;
 						
-						console.log(tmp.name, '!');
+						console.log(this.name, '!');
 					}
 				}
 				
@@ -95,12 +95,12 @@
 				tmp.pins.push(new Pin(tmp, 'anode'));
 				tmp.pins.push(new Pin(tmp, 'cathode'));
 				
-				tmp.invoke = function(pin, i, u) {
-					if (pin == tmp.pin('anode') && tmp.pin('cathode').src == 'negative') {
-						tmp.pin('cathode').i = i;
-						tmp.pin('cathode').u = u;
+				tmp.invoke = function(pin, I, U) {
+					if (pin == this.pin('anode') && this.pin('cathode').src == 'negative') {
+						this.pin('cathode').i = I;
+						this.pin('cathode').u = U;
 						
-						console.log(tmp.name, '!');
+						console.log(this.name, '!');
 					}
 				}
 				
@@ -120,13 +120,13 @@
 				
 				tmp.name = name;
 				
-				tmp.invoke = function(pin, i, u) {
-					for (var i = 0; i < tmp.pins.length; i++) {
-						if (tmp.pins[i] == pin)
+				tmp.invoke = function(pin, I, U) {
+					for (var i = 0; i < this.pins.length; i++) {
+						if (this.pins[i] == pin)
 							continue;
 							
-						tmp.pins[i].i = i;
-						tmp.pins[i].u = u;
+						this.pins[i].i = I;
+						this.pins[i].u = U;
 					}
 				}
 				
@@ -204,6 +204,11 @@
 						
 						var q = [].concat(src.pin('positive').connections), stopFlag = 0, controlFlag = src.pin('negative').connections.length;
 						
+						for (var i = 0; i < q.length; i++) {
+							q[i].i = src.pin('positive').i;
+							q[i].u = src.pin('positive').u;
+						}
+						
 						while (q.length > 0) {
 							if (stopFlag > controlFlag) {
 								console.log('Stopping forward iteration');
@@ -222,8 +227,12 @@
 							for (var i = 0; i < p.component.pins.length; i++) {
 								var p2 = p.component.pins[i];
 								
-								if (p2 != p) // && p2.u && p2.i)
-									q = q.concat(p2.connections);
+								if (p2 != p && p2.u && p2.i)
+									for (var t = 0; t < p2.connections.length; t++) {
+										p2.connections[t].i = p2.i;
+										p2.connections[t].u = p2.u;
+										q.push(p2.connections[t]);
+									}
 							}
 						}
 					}
@@ -237,6 +246,8 @@
 		var a = new Component('dc_source', 'src1');
 		a.pins.push(new Pin(a, 'positive'));
 		a.pins.push(new Pin(a, 'negative'));
+		a.pin('positive').i = 1;
+		a.pin('positive').u = 5;
 		Cs.add(a);
 		
 		var a = new Resistor('r1', 1);
@@ -259,9 +270,6 @@
 		
 		Cs.component('-2').connect(Cs.component('src1').pin('negative'));
 		Cs.component('-2').connect(Cs.component('r1').pin('b'));
-		
-		Cs.component('src1').pin('positive').u = 5;
-		Cs.component('src1').pin('positive').i = 1;
 		
 		Cs.run(Cs.component('src1'));
 		</script>
