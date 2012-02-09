@@ -173,11 +173,11 @@
 					},
 					
 					run: function(src) {
-						var q = src.pin('negative').connections, stopFlag = 0, controlFlag = src.pin('positive').connections.length;
+						var q = [].concat(src.pin('negative').connections), stopFlag = 0, controlFlag = src.pin('positive').connections.length;
 						
 						while (q.length > 0) {
 							if (stopFlag > controlFlag) {
-								console.log('Stopping');
+								console.log('Stopping backward iteration');
 								break;
 							}
 								
@@ -199,6 +199,31 @@
 										//p2.connections[t].src = 'negative';
 									}
 								}
+							}
+						}
+						
+						var q = [].concat(src.pin('positive').connections), stopFlag = 0, controlFlag = src.pin('negative').connections.length;
+						
+						while (q.length > 0) {
+							if (stopFlag > controlFlag) {
+								console.log('Stopping forward iteration');
+								break;
+							}
+							
+							for (var i = 0; i < q.length; i++) {
+								if (q[i] == src.pin('negative'))
+									stopFlag++;
+							}
+							
+							var p = q.shift();
+							
+							p.component.invoke(p, p.i, p.u);
+							
+							for (var i = 0; i < p.component.pins.length; i++) {
+								var p2 = p.component.pins[i];
+								
+								if (p2 != p) // && p2.u && p2.i)
+									q = q.concat(p2.connections);
 							}
 						}
 					}
@@ -235,7 +260,10 @@
 		Cs.component('-2').connect(Cs.component('src1').pin('negative'));
 		Cs.component('-2').connect(Cs.component('r1').pin('b'));
 		
-		Cs.run(Cs.component('src1'))
+		Cs.component('src1').pin('positive').u = 5;
+		Cs.component('src1').pin('positive').i = 1;
+		
+		Cs.run(Cs.component('src1'));
 		</script>
 
         <script type="text/javascript">
