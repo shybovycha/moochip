@@ -38,7 +38,7 @@
 					invoke: function(pin, I, U) {
 					},
 					
-					conduction: function(pinB) {
+					conduction: function(pinA, pinB) {
 					},
 
 					pin: function(name) {
@@ -78,7 +78,7 @@
 					}
 				}
 				
-				tmp.conduction = function(pinB) {
+				tmp.conduction = function(pinA, pinB) {
 					return true;
 				}
 				
@@ -104,8 +104,8 @@
 					}
 				}
 				
-				tmp.conduction = function(pinB) {
-					if (pinB.name == 'cathode')
+				tmp.conduction = function(pinA, pinB) {
+					if (pinB.name == 'cathode' && pinB.component == this)
 						return true; else
 							return false;
 				}
@@ -130,7 +130,7 @@
 					}
 				}
 				
-				tmp.conduction = function(pinB) {
+				tmp.conduction = function(pinA, pinB) {
 					return true;
 				}
 				
@@ -173,35 +173,6 @@
 					},
 					
 					run: function(src) {
-						var q = [].concat(src.pin('negative').connections), stopFlag = 0, controlFlag = src.pin('positive').connections.length;
-						
-						while (q.length > 0) {
-							if (stopFlag > controlFlag) {
-								console.log('Stopping backward iteration');
-								break;
-							}
-								
-							for (var i = 0; i < q.length; i++) {
-								if (q[i] == src.pin('positive'))
-									stopFlag++;
-							}
-							
-							var p = q.shift();
-							
-							p.src = 'negative';
-							
-							for (var i = 0; i < p.component.pins.length; i++) {
-								var p2 = p.component.pins[i];
-								
-								if (p != p2 && p.component != src && p2.component.conduction(p)) {
-									for (var t = 0; t < p2.connections.length; t++) {
-										q.push(p2.connections[t]);
-										//p2.connections[t].src = 'negative';
-									}
-								}
-							}
-						}
-						
 						var q = [].concat(src.pin('positive').connections), stopFlag = 0, controlFlag = src.pin('negative').connections.length;
 						
 						for (var i = 0; i < q.length; i++) {
@@ -211,7 +182,7 @@
 						
 						while (q.length > 0) {
 							if (stopFlag > controlFlag) {
-								console.log('Stopping forward iteration');
+								console.log('Stopping forward iterations');
 								break;
 							}
 							
@@ -221,6 +192,46 @@
 							}
 							
 							var p = q.shift();
+							
+							var isSrcNegativeReachable = function(pin, src) {
+								var q = [ pin ], v = [];
+								
+								while (q.length > 0) {
+									var p = q.shift();
+									
+									if (v.indexOf(p) > -1 || p == src.pin('positive'))
+										continue;
+									
+									if (p == src.pin('negative')) {
+										return true;
+									}
+									
+									v.push(p);
+									
+									for (var i = 0; i < p.connections.length; i++) {
+										var p2 = p.connections[i];
+										
+										if (v.indexOf(p2) < 0 && p != p2)
+											q = q.concat(p2);
+									}
+									
+									for (var i = 0; i < p.component.pins.length; i++) {
+										var p2 = p.component.pins[i];
+										
+										if (v.indexOf(p2) < 0 && p != p2 && p.component.conduction(p, p2))
+											q = q.concat(p2.connections);
+									}
+								}
+								
+								return false;
+							}
+							
+							for (var i = 0; i < p.component.pins.length; i++) {
+								var p2 = p.component.pins[i];
+								
+								if (isSrcNegativeReachable(p2, src))
+									p2.src = 'negative';
+							}
 							
 							p.component.invoke(p, p.i, p.u);
 							
@@ -262,8 +273,8 @@
 		var a = new Wire('-2');
 		Cs.add(a);
 		
-		Cs.component('-1').connect(Cs.component('vd1').pin('anode'));
-		Cs.component('-2').connect(Cs.component('vd1').pin('cathode'));
+		Cs.component('-1').connect(Cs.component('vd1').pin('cathode'));
+		Cs.component('-2').connect(Cs.component('vd1').pin('anode'));
 		
 		Cs.component('-1').connect(Cs.component('src1').pin('positive'));
 		Cs.component('-1').connect(Cs.component('r1').pin('a'));
