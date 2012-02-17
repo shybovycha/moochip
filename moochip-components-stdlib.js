@@ -20,11 +20,11 @@ Resistor = function(name, R) {
 			
 			console.log(this.name, '!');
 		}
-	}
+	};
 	
 	tmp.conduction = function(pinA, pinB) {
 		return true;
-	}
+	};
 	
 	return tmp;
 }
@@ -44,13 +44,13 @@ Diode = function(name) {
 			
 			console.log(this.name, '!');
 		}
-	}
+	};
 	
 	tmp.conduction = function(pinA, pinB) {
 		if (pinB.name == 'cathode' && pinB.component == this)
 			return true; else
 				return false;
-	}
+	};
 	
 	return tmp;
 }
@@ -68,18 +68,18 @@ Wire = function(name) {
 			this.pins[i].i = I;
 			this.pins[i].u = U;
 		}
-	}
+	};
 	
 	tmp.conduction = function(pinA, pinB) {
 		return true;
-	}
+	};
 	
 	tmp.connect = function(pin) {
 		var lastPin = tmp.pins[tmp.pins.length - 1], N = (parseInt(lastPin ? lastPin.name : 0)) + 1, p = new Pin(tmp, N);
 		p.connect(pin);
 		tmp.pins.push(p);
 		return p;
-	}
+	};
 	
 	return tmp;
 }
