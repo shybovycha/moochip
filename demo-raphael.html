@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>moochip raphael demo</title>
+        
+		<script type="text/javascript" src="raphael.js"></script>
+        
+		<script type="text/javascript" src="moochip.js"></script>
+		<script type="text/javascript" src="moochip-stdlib-raphael.js"></script>
+		
+		<script type="text/javascript">
+		var Cs = new Scheme();
+		
+		var a = new Component('dc_source', 'src1');
+		a.pins.push(new Pin(a, 'positive'));
+		a.pins.push(new Pin(a, 'negative'));
+		a.pin('positive').i = 1;
+		a.pin('positive').u = 5;
+		Cs.add(a);
+		
+		var a = new Resistor('r1', 1);
+		Cs.add(a);
+		
+		var a = new Diode('vd1');
+		Cs.add(a);
+		
+		var a = new Wire('-1');
+		Cs.add(a);
+		
+		var a = new Wire('-2');
+		Cs.add(a);
+		
+		Cs.component('-1').connect(Cs.component('vd1').pin('cathode'));
+		Cs.component('-2').connect(Cs.component('vd1').pin('anode'));
+		
+		Cs.component('-1').connect(Cs.component('src1').pin('positive'));
+		Cs.component('-1').connect(Cs.component('r1').pin('a'));
+		
+		Cs.component('-2').connect(Cs.component('src1').pin('negative'));
+		Cs.component('-2').connect(Cs.component('r1').pin('b'));
+		
+		Cs.run(Cs.component('src1'));
+		</script>
+
+        <script type="text/javascript">
+		window.onload = function () {
+			var cellSize = 25;
+			
+			var R = Raphael(0, 0, "100%", "100%");
+			
+			var r = R.set();
+			
+			r.push(R.circle(100, 100, 50).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5}));
+			r.push(R.path("M50,100L25,100").attr({fill: "none", "stroke-width": 2}));
+			r.push(R.path("M150,100L175,100").attr({fill: "none", "stroke-width": 2}));
+				
+			var start = function () {
+				r.oBB = r.getBBox();
+			},
+			
+			move = function (dx, dy) {
+				var bb = r.getBBox();
+				r.translate(r.oBB.x - bb.x + dx, r.oBB.y - bb.y + dy);
+			},
+			
+			up = function () {
+			};
+			
+			r.drag(move, start, up);
+		};
+        </script>
+    </head>
+	
+    <body>
+        <div id="holder"></div>
+    </body>
+</html>

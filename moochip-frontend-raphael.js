@@ -1,1 +1,0 @@
-Pin.prototype.entity = -3.14;
