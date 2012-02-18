@@ -12,10 +12,12 @@
 		<script type="text/javascript">
 		window.onload = function () {
 			var R = Raphael(0, 0, "100%", "100%");
-			
+
 			MooChip.paper = R;
 			
 			var Cs = new Scheme();
+			
+			MooChip.scheme = Cs;
 			
 			var a = new Component('dc_source', 'src1');
 			a.pins.push(new Pin(a, 'positive'));

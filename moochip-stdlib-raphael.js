@@ -101,6 +101,12 @@ Diode = function(name) {
 			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
 			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			
+			for (var i = 0; i < tmp.pins.length; i++) {
+				if (tmp.pins[i].connectionLine) {
+					//tmp.pins[i].connectionLine.attr({'path': });
+				}
+			}
 		},
 		
 		up = function() {

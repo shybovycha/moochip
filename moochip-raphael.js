@@ -1,9 +1,12 @@
-function MooChip()
-{
-}
+function MooChip() {}
 
 MooChip.paper = null;
+MooChip.scheme = null;
 MooChip.gridSize = 25;
+
+MooChip.distance = function(x1, y1, x2, y2) {
+	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
 
 function Pin(component, name)
 {
@@ -17,6 +20,7 @@ function Pin(component, name)
 	this.u = null;
 	
 	this.entity = null;
+	this.connectionLine = null;
 
 	this.connect = function(pin) {
 		this.connections.push(pin);
@@ -33,16 +37,58 @@ function Pin(component, name)
 			
 		this.entity = MooChip.paper.circle(x, y, r).attr({'fill': '#A13E3E'});
 		
-		var move = function(dx, dy) {
+		var entity = this.entity,
+		
+		move = function(dx, dy) {
+			var ox = this.connectionLine.ox, oy = this.connectionLine.oy;
+			
+			this.connectionLine.attr({'path': 'M' + ox + ',' + oy + 'L' + (ox + dx) + ',' + (oy + dy)});
 		}, 
 		
-		start = function() {
+		start = function(x, y) {
+			if (!this.connectionLine)
+				this.connectionLine = MooChip.paper.path('M' + x + ',' + y + 'L' + x + ',' + y).attr({'stroke': '#10097B', 'stroke-width': 3}); else
+					this.connectionLine.attr({'path': 'M' + x + ',' + y + 'L' + x + ',' + y});
+					
+			this.connectionLine.ox = x;
+			this.connectionLine.oy = y;
 		},
 		
-		up = function() {
+		end = function() {
+			var components = MooChip.scheme.components, target = false, x1 = this.connectionLine.ox, y1 = this.connectionLine.oy, A = components.length, B = 0;
+			
+			for (var i = 0; i < components.length; i++) {
+				var pins = components[i].pins;
+				
+				B += pins.length;
+			
+				for (var t = 0; t < pins.length; t++) {
+					if (!pins[t].entity || pins[t].entity == entity)
+						continue;
+						
+					var x2 = pins[t].entity.attr('cx'), y2 = pins[t].entity.attr('cy');
+						
+					if (MooChip.distance(x1, y1, x2, y2) < 15) {
+						target = true; //pins[t];
+						//target.connectionLine = MooChip.paper.path('M' + x2 + ',' + y2 + 'L' + x1 + ',' + y1).attr({'stroke': '#10097B', 'stroke-width': 3});
+						console.log('ololo', x1, y1, x2, y2);
+						break;
+					}
+				}
+				
+				if (target)
+					break;
+			}
+			
+			console.log('Checked ' + A + ' components and ' + B + ' pins');
+			
+			if (!target) {
+				this.connectionLine.remove();
+				this.connectionLine = null;
+			}
 		};
 		
-		this.entity.drag(function(dx, dy) { });
+		this.entity.drag(move, start, end);
 	};
 }
 
