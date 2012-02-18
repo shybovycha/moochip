@@ -15,6 +15,8 @@ function Pin(component, name)
 	this.src = null;
 	this.i = null;
 	this.u = null;
+	
+	this.entity = null;
 
 	this.connect = function(pin) {
 		this.connections.push(pin);
@@ -22,21 +24,26 @@ function Pin(component, name)
 		return this;
 	};
 	
-	/*var start = function () {
-	},
-	
-	move = function (dx, dy) {
-		this.entity.wireLine = __Paper__.path('M' + r.oBB.x + ',' + r.oBB.y + 'L' + (r.oBB.x + dx) + ',' + (r.oBB.y + dy));
-	},
-	
-	up = function () {
-		this.entity.connectionLineStack.push(this.entity.wireLine);
-		this.entity.wireLine.remove();
+	this.createEntity = function(x, y, r) {
+		if (!x || !y)
+			return;
+			
+		if (!r)
+			r = 5;
+			
+		this.entity = MooChip.paper.circle(x, y, r).attr({'fill': '#A13E3E'});
+		
+		var move = function(dx, dy) {
+		}, 
+		
+		start = function() {
+		},
+		
+		up = function() {
+		};
+		
+		this.entity.drag(function(dx, dy) { });
 	};
-	
-	this.entity.connectionLineStack = [];
-	this.entity = __Paper__.circle(-100, -100, 5).attr({stroke: Raphael.color('#4F564F')});
-	this.entity.drag(move, start, up);*/
 }
 
 function Component(type, name)

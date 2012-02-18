@@ -15,15 +15,27 @@ Resistor = function(name, R) {
 	this.entity.push(MooChip.paper.path('M40,40L20,40'));
 	this.entity.push(MooChip.paper.path('M80,40L100,40'));
 	
-	var entity = this.entity,
+	this.pinEntity = MooChip.paper.set();
+	
+	var pinA = tmp.pin('a'), pinB = tmp.pin('b');
+
+	pinA.createEntity(20, 40);
+	pinB.createEntity(100, 40);
+	
+	this.pinEntity.push(pinA.entity);
+	this.pinEntity.push(pinB.entity);
+	
+	var entity = this.entity, pinEntity = this.pinEntity,
 	
 		start = function() {
 			entity.oBB = entity.getBBox();
+			pinEntity.oBB = pinEntity.getBBox();
 		},
 		
 		move = function(dx, dy) {
-			var bb = entity.getBBox();
+			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
 		},
 		
 		up = function() {
@@ -67,16 +79,28 @@ Diode = function(name) {
 	this.entity.push(MooChip.paper.path('M60,25L60,55'));
 	this.entity.push(MooChip.paper.path('M40,40L20,40'));
 	this.entity.push(MooChip.paper.path('M60,40L80,40'));
+
+	this.pinEntity = MooChip.paper.set();
 	
-	var entity = this.entity,
+	var anode = tmp.pin('anode'), cathode = tmp.pin('cathode');
+
+	anode.createEntity(20, 40);
+	cathode.createEntity(80, 40);
+	
+	this.pinEntity.push(anode.entity);
+	this.pinEntity.push(cathode.entity);
+	
+	var entity = this.entity, pinEntity = this.pinEntity,
 	
 		start = function() {
 			entity.oBB = entity.getBBox();
+			pinEntity.oBB = pinEntity.getBBox();
 		},
 		
 		move = function(dx, dy) {
-			var bb = entity.getBBox();
+			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
 		},
 		
 		up = function() {
