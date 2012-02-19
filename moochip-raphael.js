@@ -29,27 +29,7 @@ function Pin(component, name)
 	this.connect = function(pin) {
 		this.connections.push(pin);
 		pin.connections.push(this);
-		
-		/*if (this.entity && pin.entity) {
-			var lines = MooChip.scheme.connectionLines, fl = false;
-			
-			for (var i = 0; i < lines.length; i++) {
-				if (lines[i].pinA == this || lines[i].pinB == pin) {
-					fl = true;
-					break;
-				}
-			}
-			
-			if (!fl) {
-				var l = MooChip.paper.path('M' + this.entity.attr('x') + ',' + this.entity.attr('y') + 'L' + pin.entity.attr('x') + ',' + pin.entity.attr('y'));
-				l.pinA = this;
-				l.pinB = pin;
-				lines.push(l);
-			}
-		} else {
-			console.log([this.entity, pin.entity]);
-		}*/
-		
+
 		return this;
 	};
 	
@@ -62,7 +42,6 @@ function Pin(component, name)
 			
 		this.entity = MooChip.paper.circle(x, y, r).attr({'fill': '#A13E3E'});
 		this.entity.ox = x; this.entity.oy = y;
-		this.entity.x = x; this.entity.y = y;
 		
 		var entity = this.entity,
 		
@@ -79,23 +58,10 @@ function Pin(component, name)
 					
 			this.connectionLine.ox = x;
 			this.connectionLine.oy = y;
-			
-			entity.x = entity.ox; entity.y = entity.oy;
-
-			var tr = entity.transform();
-			
-			for (var i = 0; i < tr.length; i++) {
-				if (tr[i][0] == 't') {
-					entity.x += tr[i][1];
-					entity.y += tr[i][2];
-				}
-			}
 		},
 		
-		end = function() {
-			console.log(entity.x, entity.y);
-			
-			var _components = MooChip.scheme.components, target = false, x1 = this.connectionLine.ox, y1 = this.connectionLine.oy, res = [];
+		end = function(evt) {
+			var _components = MooChip.scheme.components, target = false, x1 = evt.clientX, y1 = evt.clientY;
 			
 			for (var i = 0; i < _components.length; i++) {
 				var _pins = _components[i].pins;
@@ -104,14 +70,20 @@ function Pin(component, name)
 					if (!_pins[t].entity || _pins[t].entity == entity) {
 						continue;
 					}
-						
-					var x2 = _pins[t].entity.x, y2 = _pins[t].entity.y, d = MooChip.paper.distance(x1, y1, x2, y2);
 					
-					res.push({d: d, p: _pins[t].name, x: x2, y: y2});
-					
+					var x2 = _pins[t].entity.ox, y2 = _pins[t].entity.oy, tr = _pins[t].entity.transform();
+			
+					for (var j = 0; j < tr.length; j++) {
+						if (tr[j][0] == 't') {
+							x2 += tr[j][1];
+							y2 += tr[j][2];
+						}
+					}
+
+					var d = MooChip.paper.distance(x1, y1, x2, y2);
+
 					if (d < 15) {
-						target = true;
-						console.log('ololo', ' ', x1, ' ', y1, ' ', x2, ' ', y2);
+						target = _pins[t];
 						break;
 					}
 				}
@@ -120,11 +92,11 @@ function Pin(component, name)
 					break;
 			}
 			
-			console.log(res);
-			
 			if (!target) {
 				this.connectionLine.remove();
 				this.connectionLine = null;
+			} else {
+				console.log(target);
 			}
 		};
 		
