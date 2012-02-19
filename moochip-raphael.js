@@ -4,9 +4,13 @@ MooChip.paper = null;
 MooChip.scheme = null;
 MooChip.gridSize = 25;
 
-MooChip.distance = function(x1, y1, x2, y2) {
+Raphael.fn.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-}
+};
+
+Raphael.fn.getBBoxCenter = function(bbox) {
+	return { x: (bbox.x + bbox.width) / 2, y: (bbox.y + bbox.height) / 2 };
+};
 
 function Pin(component, name)
 {
@@ -21,10 +25,31 @@ function Pin(component, name)
 	
 	this.entity = null;
 	this.connectionLine = null;
-
+	
 	this.connect = function(pin) {
 		this.connections.push(pin);
 		pin.connections.push(this);
+		
+		/*if (this.entity && pin.entity) {
+			var lines = MooChip.scheme.connectionLines, fl = false;
+			
+			for (var i = 0; i < lines.length; i++) {
+				if (lines[i].pinA == this || lines[i].pinB == pin) {
+					fl = true;
+					break;
+				}
+			}
+			
+			if (!fl) {
+				var l = MooChip.paper.path('M' + this.entity.attr('x') + ',' + this.entity.attr('y') + 'L' + pin.entity.attr('x') + ',' + pin.entity.attr('y'));
+				l.pinA = this;
+				l.pinB = pin;
+				lines.push(l);
+			}
+		} else {
+			console.log([this.entity, pin.entity]);
+		}*/
+		
 		return this;
 	};
 	
@@ -36,6 +61,8 @@ function Pin(component, name)
 			r = 5;
 			
 		this.entity = MooChip.paper.circle(x, y, r).attr({'fill': '#A13E3E'});
+		this.entity.ox = x; this.entity.oy = y;
+		this.entity.x = x; this.entity.y = y;
 		
 		var entity = this.entity,
 		
@@ -52,26 +79,39 @@ function Pin(component, name)
 					
 			this.connectionLine.ox = x;
 			this.connectionLine.oy = y;
+			
+			entity.x = entity.ox; entity.y = entity.oy;
+
+			var tr = entity.transform();
+			
+			for (var i = 0; i < tr.length; i++) {
+				if (tr[i][0] == 't') {
+					entity.x += tr[i][1];
+					entity.y += tr[i][2];
+				}
+			}
 		},
 		
 		end = function() {
-			var components = MooChip.scheme.components, target = false, x1 = this.connectionLine.ox, y1 = this.connectionLine.oy, A = components.length, B = 0;
+			console.log(entity.x, entity.y);
 			
-			for (var i = 0; i < components.length; i++) {
-				var pins = components[i].pins;
+			var _components = MooChip.scheme.components, target = false, x1 = this.connectionLine.ox, y1 = this.connectionLine.oy, res = [];
+			
+			for (var i = 0; i < _components.length; i++) {
+				var _pins = _components[i].pins;
 				
-				B += pins.length;
-			
-				for (var t = 0; t < pins.length; t++) {
-					if (!pins[t].entity || pins[t].entity == entity)
+				for (var t = 0; t < _pins.length; t++) {
+					if (!_pins[t].entity || _pins[t].entity == entity) {
 						continue;
+					}
 						
-					var x2 = pins[t].entity.attr('cx'), y2 = pins[t].entity.attr('cy');
-						
-					if (MooChip.distance(x1, y1, x2, y2) < 15) {
-						target = true; //pins[t];
-						//target.connectionLine = MooChip.paper.path('M' + x2 + ',' + y2 + 'L' + x1 + ',' + y1).attr({'stroke': '#10097B', 'stroke-width': 3});
-						console.log('ololo', x1, y1, x2, y2);
+					var x2 = _pins[t].entity.x, y2 = _pins[t].entity.y, d = MooChip.paper.distance(x1, y1, x2, y2);
+					
+					res.push({d: d, p: _pins[t].name, x: x2, y: y2});
+					
+					if (d < 15) {
+						target = true;
+						console.log('ololo', ' ', x1, ' ', y1, ' ', x2, ' ', y2);
 						break;
 					}
 				}
@@ -80,7 +120,7 @@ function Pin(component, name)
 					break;
 			}
 			
-			console.log('Checked ' + A + ' components and ' + B + ' pins');
+			console.log(res);
 			
 			if (!target) {
 				this.connectionLine.remove();
@@ -115,10 +155,12 @@ function Component(type, name)
 	};
 	
 	this.entity = null;
+	this.pinEntity = null;
 }
 
 function Scheme() {
 	this.components = [];
+	this.connectionLines = [];
 	
 	this.add = function(component) {
 		this.components.push(component);

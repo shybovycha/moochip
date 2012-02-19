@@ -47,6 +47,15 @@
 			Cs.component('-2').connect(Cs.component('src1').pin('negative'));
 			Cs.component('-2').connect(Cs.component('r1').pin('b'));
 			
+			/*Cs.component('r1').pin('a').connect(Cs.component('src1').pin('positive'));
+			Cs.component('r1').pin('a').connect(Cs.component('vd1').pin('cathode'));
+			
+			Cs.component('r1').pin('b').connect(Cs.component('src1').pin('negative'));
+			Cs.component('r1').pin('b').connect(Cs.component('vd1').pin('anode'));
+			
+			Cs.component('vd1').pin('anode').connect(Cs.component('src1').pin('negative'));
+			Cs.component('vd1').pin('cathode').connect(Cs.component('src1').pin('positive'));*/
+			
 			Cs.run(Cs.component('src1'));
 		};
         </script>

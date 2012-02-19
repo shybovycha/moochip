@@ -138,6 +138,30 @@ Wire = function(name) {
 	
 	tmp.name = name;
 	
+	this.entity = MooChip.paper.set();
+	this.entity.push(MooChip.paper.circle(50, 25, 15).attr({'fill': MooChip.paper.raphael.color('#4C698A')}));
+
+	this.pinEntity = MooChip.paper.set();
+	
+	var entity = this.entity, pinEntity = this.pinEntity,
+	
+		start = function() {
+			entity.oBB = entity.getBBox();
+			pinEntity.oBB = pinEntity.getBBox();
+		},
+		
+		move = function(dx, dy) {
+			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
+			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+		},
+		
+		up = function() {
+			console.log(name, ' dropped!');
+		};
+	
+	entity.drag(move, start, up);
+	
 	tmp.invoke = function(pin, I, U) {
 		for (var i = 0; i < this.pins.length; i++) {
 			if (this.pins[i] == pin)
@@ -155,7 +179,9 @@ Wire = function(name) {
 	tmp.connect = function(pin) {
 		var lastPin = tmp.pins[tmp.pins.length - 1], N = (parseInt(lastPin ? lastPin.name : 0)) + 1, p = new Pin(tmp, N);
 		p.connect(pin);
+		p.createEntity(50, 25);
 		tmp.pins.push(p);
+		pinEntity.push(p.entity);
 		return p;
 	};
 	
