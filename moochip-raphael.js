@@ -158,17 +158,22 @@ function Scheme() {
 	this.connectionLines = [];
 	
 	this.connectionLine = function(pinA, pinB) {
-		var lines = this.connectionLines;
+		var lines = this.connectionLines, res = null;
 			
 		for (var i = 0; i < lines.length; i++) {
-			if ((pinA && !pinB && (lines[i].pinA == pinA || lines[i].pinB == pinA)) || 
-				(pinA && pinB && ((lines[i].pinA == pinA && lines[i].pinB == pinB) || (lines[i].pinA == pinB && lines[i].pinB == pinA)))) 
-			{
-				return lines[i];
+			if (pinA && !pinB && (lines[i].pinA == pinA || lines[i].pinB == pinA)) {
+				if (!res)
+					res = [];
+					
+				res.push(lines[i]);
+			} else
+			if (pinA && pinB && ((lines[i].pinA == pinA && lines[i].pinB == pinB) || (lines[i].pinA == pinB && lines[i].pinB == pinA))) {
+				res = lines[i];
+				break;
 			}
 		}
 		
-		return null;
+		return res;
 	};
 	
 	this.updateConnectionLines = function(component) {
@@ -178,14 +183,16 @@ function Scheme() {
 			return;
 		
 		for (var i = 0; i < pins.length; i++) {
-			var line = this.connectionLine(pins[i].entity);
+			var lines = this.connectionLine(pins[i].entity);
 			
-			if (!line)
+			if (!lines || !lines.length)
 				continue;
+
+			for (var t = 0; t < lines.length; t++) {
+				var line = lines[t], p1 = line.pinA.getPos(), p2 = line.pinB.getPos();
 				
-			var p1 = line.pinA.getPos(), p2 = line.pinB.getPos();
-			
-			line.attr({'path': 'M' + p1.x + ',' + p1.y + 'L' + p2.x + ',' + p2.y});
+				line.attr({'path': 'M' + p1.x + ',' + p1.y + 'L' + p2.x + ',' + p2.y});
+			}
 		}
 	}
 	
