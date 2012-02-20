@@ -8,6 +8,12 @@ MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 };
 
+MooChip.st.rotate = function(degree) {
+	// 1) Find total set' BBox with transformations
+	// 2) Find that BBox' center
+	// 3) Rotate each item of the set around that center with **degree**
+};
+
 Raphael.el.getPos = function() {
 	var x = this.ox || 0, y = this.oy || 0, tr = this.transform();
 
@@ -19,7 +25,7 @@ Raphael.el.getPos = function() {
 	}
 	
 	return { 'x': x, 'y': y };
-}
+};
 
 function Pin(component, name)
 {
@@ -39,7 +45,9 @@ function Pin(component, name)
 		this.connections.push(pin);
 		pin.connections.push(this);
 		
-		if (this.entity && pin.entity && !MooChip.scheme.connectionLine(this.entity, pin.entity)) {
+		var line = MooChip.scheme.connectionLine(this.entity, pin.entity);
+		
+		if (this.entity && pin.entity && !line) {
 			var p1 = this.entity.getPos(), p2 = pin.entity.getPos();
 			var line = MooChip.paper.path('M' + p1.x + ',' + p1.y + 'L' + p2.x + ',' + p2.y);
 			
@@ -47,6 +55,8 @@ function Pin(component, name)
 			line.pinB = pin.entity;
 			
 			MooChip.scheme.connectionLines.push(line);
+		} else {
+			console.log('Could not connect', [this, pin], 'because of', line);
 		}
 
 		return this;
@@ -61,6 +71,7 @@ function Pin(component, name)
 			
 		this.entity = MooChip.paper.circle(x, y, r).attr({'fill': '#A13E3E'});
 		this.entity.ox = x; this.entity.oy = y;
+		this.entity.pin = this;
 		
 		var entity = this.entity,
 		
@@ -81,6 +92,8 @@ function Pin(component, name)
 		
 		end = function(evt) {
 			var _components = MooChip.scheme.components, target = false, x1 = evt.clientX, y1 = evt.clientY;
+			
+			// check if selected component is a wire
 			
 			for (var i = 0; i < _components.length; i++) {
 				var _pins = _components[i].pins;
@@ -106,7 +119,7 @@ function Pin(component, name)
 			this.connectionLine = null;
 			
 			if (target) {
-				console.log('Connection between', [target, this], 'could be established!');
+				target.connect(this.pin);
 			}
 		};
 		
@@ -149,7 +162,7 @@ function Scheme() {
 			
 		for (var i = 0; i < lines.length; i++) {
 			if ((pinA && !pinB && (lines[i].pinA == pinA || lines[i].pinB == pinA)) || 
-				(pinB && (lines[i].pinA == pinA || lines[i].pinB == pinB || lines[i].pinA == pinB || lines[i].pinB == pinA))) 
+				(pinA && pinB && ((lines[i].pinA == pinA && lines[i].pinB == pinB) || (lines[i].pinA == pinB && lines[i].pinB == pinA)))) 
 			{
 				return lines[i];
 			}
