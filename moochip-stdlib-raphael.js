@@ -26,6 +26,8 @@ Resistor = function(name, R) {
 	tmp.pinEntity.push(pinA.entity);
 	tmp.pinEntity.push(pinB.entity);
 	
+	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
+	
 	var entity = tmp.entity, pinEntity = tmp.pinEntity,
 	
 		start = function() {
@@ -92,6 +94,8 @@ Diode = function(name) {
 	
 	tmp.pinEntity.push(anode.entity);
 	tmp.pinEntity.push(cathode.entity);
+	
+	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
 	var entity = tmp.entity, pinEntity = tmp.pinEntity,
 	
@@ -224,6 +228,8 @@ DCSource = function(name, U, I) {
 	
 	tmp.pinEntity.push(pinA.entity);
 	tmp.pinEntity.push(pinB.entity);
+	
+	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
 	var entity = tmp.entity, pinEntity = tmp.pinEntity,
 	

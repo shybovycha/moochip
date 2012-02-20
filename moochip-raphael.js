@@ -8,7 +8,7 @@ MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 };
 
-MooChip.st.rotate = function(degree) {
+Raphael.st.rotate = function(degree) {
 	// 1) Find total set' BBox with transformations
 	// 2) Find that BBox' center
 	// 3) Rotate each item of the set around that center with **degree**
