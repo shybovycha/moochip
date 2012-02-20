@@ -14,6 +14,7 @@ Resistor = function(name, R) {
 	this.entity.push(MooChip.paper.rect(40, 30, 40, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
 	this.entity.push(MooChip.paper.path('M40,40L20,40'));
 	this.entity.push(MooChip.paper.path('M80,40L100,40'));
+	this.entity.component = tmp;
 	
 	this.pinEntity = MooChip.paper.set();
 	
@@ -36,6 +37,7 @@ Resistor = function(name, R) {
 			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
 			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
 		up = function() {
@@ -79,6 +81,7 @@ Diode = function(name) {
 	this.entity.push(MooChip.paper.path('M60,25L60,55'));
 	this.entity.push(MooChip.paper.path('M40,40L20,40'));
 	this.entity.push(MooChip.paper.path('M60,40L80,40'));
+	this.entity.component = tmp;
 
 	this.pinEntity = MooChip.paper.set();
 	
@@ -101,12 +104,7 @@ Diode = function(name) {
 			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
 			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			
-			for (var i = 0; i < tmp.pins.length; i++) {
-				if (tmp.pins[i].connectionLine) {
-					//tmp.pins[i].connectionLine.attr({'path': });
-				}
-			}
+			MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
 		up = function() {
@@ -140,6 +138,7 @@ Wire = function(name) {
 	
 	this.entity = MooChip.paper.set();
 	this.entity.push(MooChip.paper.circle(50, 25, 15).attr({'fill': MooChip.paper.raphael.color('#4C698A')}));
+	this.entity.component = tmp;
 
 	this.pinEntity = MooChip.paper.set();
 	
@@ -154,6 +153,7 @@ Wire = function(name) {
 			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
 			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
 		up = function() {
@@ -178,10 +178,13 @@ Wire = function(name) {
 	
 	tmp.connect = function(pin) {
 		var lastPin = tmp.pins[tmp.pins.length - 1], N = (parseInt(lastPin ? lastPin.name : 0)) + 1, p = new Pin(tmp, N);
-		p.connect(pin);
-		p.createEntity(50, 25);
+		
 		tmp.pins.push(p);
+		
+		p.createEntity(50, 25);
 		pinEntity.push(p.entity);
+
+		p.connect(pin);
 		return p;
 	};
 	
@@ -210,6 +213,7 @@ DCSource = function(name, U, I) {
 	this.entity.push(MooChip.paper.text(72, 38, '-').attr({'font': "16px Helvetica", 'font-weight': 'bold'}));
 	this.entity.push(MooChip.paper.path('M40,40L20,40'));
 	this.entity.push(MooChip.paper.path('M80,40L100,40'));
+	this.entity.component = tmp;
 	
 	this.pinEntity = MooChip.paper.set();
 	
@@ -232,6 +236,7 @@ DCSource = function(name, U, I) {
 			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
 			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
 		up = function() {

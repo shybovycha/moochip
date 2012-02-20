@@ -4,13 +4,22 @@ MooChip.paper = null;
 MooChip.scheme = null;
 MooChip.gridSize = 25;
 
-Raphael.fn.distance = function(x1, y1, x2, y2) {
+MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 };
 
-Raphael.fn.getBBoxCenter = function(bbox) {
-	return { x: (bbox.x + bbox.width) / 2, y: (bbox.y + bbox.height) / 2 };
-};
+Raphael.el.getPos = function() {
+	var x = this.ox || 0, y = this.oy || 0, tr = this.transform();
+
+	for (var j = 0; j < tr.length; j++) {
+		if (tr[j][0] == 't') {
+			x += tr[j][1];
+			y += tr[j][2];
+		}
+	}
+	
+	return { 'x': x, 'y': y };
+}
 
 function Pin(component, name)
 {
@@ -29,6 +38,16 @@ function Pin(component, name)
 	this.connect = function(pin) {
 		this.connections.push(pin);
 		pin.connections.push(this);
+		
+		if (this.entity && pin.entity && !MooChip.scheme.connectionLine(this.entity, pin.entity)) {
+			var p1 = this.entity.getPos(), p2 = pin.entity.getPos();
+			var line = MooChip.paper.path('M' + p1.x + ',' + p1.y + 'L' + p2.x + ',' + p2.y);
+			
+			line.pinA = this.entity; 
+			line.pinB = pin.entity;
+			
+			MooChip.scheme.connectionLines.push(line);
+		}
 
 		return this;
 	};
@@ -71,16 +90,7 @@ function Pin(component, name)
 						continue;
 					}
 					
-					var x2 = _pins[t].entity.ox, y2 = _pins[t].entity.oy, tr = _pins[t].entity.transform();
-			
-					for (var j = 0; j < tr.length; j++) {
-						if (tr[j][0] == 't') {
-							x2 += tr[j][1];
-							y2 += tr[j][2];
-						}
-					}
-
-					var d = MooChip.paper.distance(x1, y1, x2, y2);
+					var _p = _pins[t].entity.getPos(), x2 = _p.x, y2 = _p.y, d = MooChip.distance(x1, y1, x2, y2);
 
 					if (d < 15) {
 						target = _pins[t];
@@ -92,11 +102,11 @@ function Pin(component, name)
 					break;
 			}
 			
-			if (!target) {
-				this.connectionLine.remove();
-				this.connectionLine = null;
-			} else {
-				console.log(target);
+			this.connectionLine.remove();
+			this.connectionLine = null;
+			
+			if (target) {
+				console.log('Connection between', [target, this], 'could be established!');
 			}
 		};
 		
@@ -133,6 +143,38 @@ function Component(type, name)
 function Scheme() {
 	this.components = [];
 	this.connectionLines = [];
+	
+	this.connectionLine = function(pinA, pinB) {
+		var lines = this.connectionLines;
+			
+		for (var i = 0; i < lines.length; i++) {
+			if ((pinA && !pinB && (lines[i].pinA == pinA || lines[i].pinB == pinA)) || 
+				(pinB && (lines[i].pinA == pinA || lines[i].pinB == pinB || lines[i].pinA == pinB || lines[i].pinB == pinA))) 
+			{
+				return lines[i];
+			}
+		}
+		
+		return null;
+	};
+	
+	this.updateConnectionLines = function(component) {
+		var pins = component.pins;
+		
+		if (!pins)
+			return;
+		
+		for (var i = 0; i < pins.length; i++) {
+			var line = this.connectionLine(pins[i].entity);
+			
+			if (!line)
+				continue;
+				
+			var p1 = line.pinA.getPos(), p2 = line.pinB.getPos();
+			
+			line.attr({'path': 'M' + p1.x + ',' + p1.y + 'L' + p2.x + ',' + p2.y});
+		}
+	}
 	
 	this.add = function(component) {
 		this.components.push(component);
