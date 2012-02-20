@@ -19,11 +19,7 @@
 			
 			MooChip.scheme = Cs;
 			
-			var a = new Component('dc_source', 'src1');
-			a.pins.push(new Pin(a, 'positive'));
-			a.pins.push(new Pin(a, 'negative'));
-			a.pin('positive').i = 1;
-			a.pin('positive').u = 5;
+			var a = new DCSource('src1', 5.0);
 			Cs.add(a);
 			
 			var a = new Resistor('r1', 1);

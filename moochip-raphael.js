@@ -159,6 +159,8 @@ function Scheme() {
 	this.run = function(src) {
 		var q = [].concat(src.pin('positive').connections), stopFlag = 0, controlFlag = src.pin('negative').connections.length;
 		
+		src.invoke(src.pin('negative'));
+		
 		for (var i = 0; i < q.length; i++) {
 			q[i].i = src.pin('positive').i;
 			q[i].u = src.pin('positive').u;

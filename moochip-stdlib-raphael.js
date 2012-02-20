@@ -187,3 +187,72 @@ Wire = function(name) {
 	
 	return tmp;
 }
+
+DCSource = function(name, U, I) {
+	var tmp = new Component('dc_source');
+	
+	if (!I)
+		I = 1.0;
+	
+	tmp.name = name;
+	tmp.U = U;
+	tmp.I = I;
+	
+	var a = new Pin(tmp, 'positive');
+	tmp.pins.push(a);
+	
+	var a = new Pin(tmp, 'negative')
+	tmp.pins.push(a);
+	
+	this.entity = MooChip.paper.set();
+	this.entity.push(MooChip.paper.circle(60, 40, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
+	this.entity.push(MooChip.paper.text(48, 40, '+').attr({'font': "16px Helvetica", 'font-weight': 'bold'}));
+	this.entity.push(MooChip.paper.text(72, 38, '-').attr({'font': "16px Helvetica", 'font-weight': 'bold'}));
+	this.entity.push(MooChip.paper.path('M40,40L20,40'));
+	this.entity.push(MooChip.paper.path('M80,40L100,40'));
+	
+	this.pinEntity = MooChip.paper.set();
+	
+	var pinA = tmp.pin('positive'), pinB = tmp.pin('negative');
+
+	pinA.createEntity(20, 40);
+	pinB.createEntity(100, 40);
+	
+	this.pinEntity.push(pinA.entity);
+	this.pinEntity.push(pinB.entity);
+	
+	var entity = this.entity, pinEntity = this.pinEntity,
+	
+		start = function() {
+			entity.oBB = entity.getBBox();
+			pinEntity.oBB = pinEntity.getBBox();
+		},
+		
+		move = function(dx, dy) {
+			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
+			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+		},
+		
+		up = function() {
+			console.log(name, ' dropped!');
+		};
+	
+	entity.drag(move, start, up);
+	
+	tmp.invoke = function(pin, I, U) {
+		if (pin == this.pin('negative')) {
+			this.pin('positive').i = this.I;
+			this.pin('positive').u = this.U;
+			
+			console.log(this.name, '!');
+		}
+	};
+	
+	tmp.conduction = function(pinA, pinB) {
+		if (pinA.name == 'negative' && pinA.component == this)
+		return true;
+	};
+	
+	return tmp;
+}
