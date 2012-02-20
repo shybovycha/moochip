@@ -10,23 +10,23 @@ Resistor = function(name, R) {
 	var a = new Pin(tmp, 'b')
 	tmp.pins.push(a);
 	
-	this.entity = MooChip.paper.set();
-	this.entity.push(MooChip.paper.rect(40, 30, 40, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
-	this.entity.push(MooChip.paper.path('M40,40L20,40'));
-	this.entity.push(MooChip.paper.path('M80,40L100,40'));
-	this.entity.component = tmp;
+	tmp.entity = MooChip.paper.set();
+	tmp.entity.push(MooChip.paper.rect(40, 30, 40, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
+	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
+	tmp.entity.push(MooChip.paper.path('M80,40L100,40'));
+	tmp.entity.component = tmp;
 	
-	this.pinEntity = MooChip.paper.set();
+	tmp.pinEntity = MooChip.paper.set();
 	
 	var pinA = tmp.pin('a'), pinB = tmp.pin('b');
 
 	pinA.createEntity(20, 40);
 	pinB.createEntity(100, 40);
 	
-	this.pinEntity.push(pinA.entity);
-	this.pinEntity.push(pinB.entity);
+	tmp.pinEntity.push(pinA.entity);
+	tmp.pinEntity.push(pinB.entity);
 	
-	var entity = this.entity, pinEntity = this.pinEntity,
+	var entity = tmp.entity, pinEntity = tmp.pinEntity,
 	
 		start = function() {
 			entity.oBB = entity.getBBox();
@@ -76,24 +76,24 @@ Diode = function(name) {
 	tmp.pins.push(new Pin(tmp, 'anode'));
 	tmp.pins.push(new Pin(tmp, 'cathode'));
 	
-	this.entity = MooChip.paper.set();
-	this.entity.push(MooChip.paper.path('M40,25L40,55L60,40L40,25z').attr({'fill': MooChip.paper.raphael.color('#fff')}));
-	this.entity.push(MooChip.paper.path('M60,25L60,55'));
-	this.entity.push(MooChip.paper.path('M40,40L20,40'));
-	this.entity.push(MooChip.paper.path('M60,40L80,40'));
-	this.entity.component = tmp;
+	tmp.entity = MooChip.paper.set();
+	tmp.entity.push(MooChip.paper.path('M40,25L40,55L60,40L40,25z').attr({'fill': MooChip.paper.raphael.color('#fff')}));
+	tmp.entity.push(MooChip.paper.path('M60,25L60,55'));
+	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
+	tmp.entity.push(MooChip.paper.path('M60,40L80,40'));
+	tmp.entity.component = tmp;
 
-	this.pinEntity = MooChip.paper.set();
+	tmp.pinEntity = MooChip.paper.set();
 	
 	var anode = tmp.pin('anode'), cathode = tmp.pin('cathode');
 
 	anode.createEntity(20, 40);
 	cathode.createEntity(80, 40);
 	
-	this.pinEntity.push(anode.entity);
-	this.pinEntity.push(cathode.entity);
+	tmp.pinEntity.push(anode.entity);
+	tmp.pinEntity.push(cathode.entity);
 	
-	var entity = this.entity, pinEntity = this.pinEntity,
+	var entity = tmp.entity, pinEntity = tmp.pinEntity,
 	
 		start = function() {
 			entity.oBB = entity.getBBox();
@@ -136,13 +136,13 @@ Wire = function(name) {
 	
 	tmp.name = name;
 	
-	this.entity = MooChip.paper.set();
-	this.entity.push(MooChip.paper.circle(50, 25, 15).attr({'fill': MooChip.paper.raphael.color('#4C698A')}));
-	this.entity.component = tmp;
+	tmp.entity = MooChip.paper.set();
+	tmp.entity.push(MooChip.paper.circle(50, 25, 15).attr({'fill': MooChip.paper.raphael.color('#4C698A')}));
+	tmp.entity.component = tmp;
 
-	this.pinEntity = MooChip.paper.set();
+	tmp.pinEntity = MooChip.paper.set();
 	
-	var entity = this.entity, pinEntity = this.pinEntity,
+	var entity = tmp.entity, pinEntity = tmp.pinEntity,
 	
 		start = function() {
 			entity.oBB = entity.getBBox();
@@ -177,9 +177,9 @@ Wire = function(name) {
 	};
 	
 	tmp.connect = function(pin) {
-		var lastPin = tmp.pins[tmp.pins.length - 1], N = (parseInt(lastPin ? lastPin.name : 0)) + 1, p = new Pin(tmp, N);
+		var lastPin = this.pins[this.pins.length - 1], N = (parseInt(lastPin ? lastPin.name : 0)) + 1, p = new Pin(this, N);
 		
-		tmp.pins.push(p);
+		this.pins.push(p);
 		
 		p.createEntity(50, 25);
 		pinEntity.push(p.entity);
@@ -207,25 +207,25 @@ DCSource = function(name, U, I) {
 	var a = new Pin(tmp, 'negative')
 	tmp.pins.push(a);
 	
-	this.entity = MooChip.paper.set();
-	this.entity.push(MooChip.paper.circle(60, 40, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
-	this.entity.push(MooChip.paper.text(48, 40, '+').attr({'font': "16px Helvetica", 'font-weight': 'bold'}));
-	this.entity.push(MooChip.paper.text(72, 38, '-').attr({'font': "16px Helvetica", 'font-weight': 'bold'}));
-	this.entity.push(MooChip.paper.path('M40,40L20,40'));
-	this.entity.push(MooChip.paper.path('M80,40L100,40'));
-	this.entity.component = tmp;
+	tmp.entity = MooChip.paper.set();
+	tmp.entity.push(MooChip.paper.circle(60, 40, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
+	tmp.entity.push(MooChip.paper.text(48, 40, '+').attr({'font': "16px Helvetica", 'font-weight': 'bold'}));
+	tmp.entity.push(MooChip.paper.text(72, 38, '-').attr({'font': "16px Helvetica", 'font-weight': 'bold'}));
+	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
+	tmp.entity.push(MooChip.paper.path('M80,40L100,40'));
+	tmp.entity.component = tmp;
 	
-	this.pinEntity = MooChip.paper.set();
+	tmp.pinEntity = MooChip.paper.set();
 	
 	var pinA = tmp.pin('positive'), pinB = tmp.pin('negative');
 
 	pinA.createEntity(20, 40);
 	pinB.createEntity(100, 40);
 	
-	this.pinEntity.push(pinA.entity);
-	this.pinEntity.push(pinB.entity);
+	tmp.pinEntity.push(pinA.entity);
+	tmp.pinEntity.push(pinB.entity);
 	
-	var entity = this.entity, pinEntity = this.pinEntity,
+	var entity = tmp.entity, pinEntity = tmp.pinEntity,
 	
 		start = function() {
 			entity.oBB = entity.getBBox();
