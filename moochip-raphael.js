@@ -9,6 +9,10 @@ MooChip.distance = function(x1, y1, x2, y2) {
 };
 
 Raphael.st.getBBox = function() {
+	if ((!this.length || this.length <= 0)) {
+		return;
+	}
+	
 	var _bb = this[0].getBBox();
 	var bb  = { x1: _bb.x, y1: _bb.y, x2: _bb.x, y2: _bb.y };
 
@@ -224,12 +228,19 @@ function Scheme() {
 		var components = MooChip.scheme.components, entity = MooChip.paper.getElementByPoint(e.clientX, e.clientY);
 		
 		for (var i = 0; i < components.length; i++) {
+			if (components[i].entity.selectionRect) {
+				components[i].entity.selectionRect.remove();
+				components[i].entity.selectionRect = null;
+			}
+		}
+		
+		for (var i = 0; i < components.length; i++) {
 			for (var t = 0; t < components[i].entity.length; t++) {
 				if (components[i].entity[t] == entity) {
-					if (MooChip.scheme.selectedComponent && components[i] != MooChip.scheme.selectedComponent && MooChip.scheme.selectedComponent.entity.selectionRect) {
+					/*if (MooChip.scheme.selectedComponent && components[i] != MooChip.scheme.selectedComponent && MooChip.scheme.selectedComponent.entity.selectionRect) {
 						MooChip.scheme.selectedComponent.entity.selectionRect.remove();
 						MooChip.scheme.selectedComponent.entity.selectionRect = null;
-					}
+					}*/
 						
 					MooChip.scheme.selectedComponent = components[i];
 					
@@ -242,13 +253,6 @@ function Scheme() {
 			}
 		}
 		
-		for (var i = 0; i < components.length; i++) {
-			if (components[i].entity.selectionRect) {
-				components[i].entity.selectionRect.remove();
-				components[i].entity.selectionRect = null;
-			}
-		}
-			
 		MooChip.scheme.selectedComponent = null;
 	};
 	
@@ -310,6 +314,7 @@ function Scheme() {
 				for (var j = 0; j < remoteConnections.length; j++) {
 					if (remoteConnections[j] == pin) {
 						pin.connections[t].connections = remoteConnections.slice(0, j).concat(remoteConnections.slice(j + 1));
+						j = 0;
 					}
 				}
 			}
@@ -322,7 +327,15 @@ function Scheme() {
 				if (line.pinA == pin.entity || line.pinB == pin.entity) {
 					line.remove();
 					lines = lines.slice(0, t).concat(lines.slice(t + 1));
+					t = 0;
 				}
+			}
+		}
+		
+		for (var i = 0; i < this.components.length; i++) {
+			if (this.components[i] == component) {
+				this.components = this.components.slice(0, i).concat(this.components.slice(i + 1));
+				i = 0;
 			}
 		}
 	};
