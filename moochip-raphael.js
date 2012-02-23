@@ -13,26 +13,26 @@ Raphael.st.getBBox = function() {
 	var bb  = { x1: _bb.x, y1: _bb.y, x2: _bb.x, y2: _bb.y };
 
 	this.forEach(function(entity) { 
-			var e = entity.getBBox(); 
-			
-			if (e.x < bb.x1) 
-					bb.x1 = e.x; 
-					
-			if (e.y < bb.y1) 
-					bb.y1 = e.y; 
-					
-			if ((e.x + e.width) > bb.x2) 
-					bb.x2 = e.x + e.width; 
-					
-			if ((e.y + e.height) > bb.y2) 
-					bb.y2 = e.y + e.height; 
+		var e = entity.getBBox(); 
+		
+		if (e.x < bb.x1) 
+			bb.x1 = e.x; 
+				
+		if (e.y < bb.y1) 
+			bb.y1 = e.y; 
+				
+		if ((e.x + e.width) > bb.x2) 
+			bb.x2 = e.x + e.width; 
+				
+		if ((e.y + e.height) > bb.y2) 
+			bb.y2 = e.y + e.height; 
 	});
 	
 	return { x: bb.x1, y: bb.y1, width: bb.x2 - bb.x1, height: bb.y2 - bb.y1};
 };
 
 Raphael.st.rotate = function(degree) {
-	var bb = this.getBBox(), cx = bb.x1 + ((bb.x2 - bb.x1) / 2.0), cy = bb.y1 + ((bb.y2 - bb.y1) / 2.0);
+	var bb = this.getBBox(), cx = bb.x + (bb.width / 2.0), cy = bb.y + (bb.height / 2.0);
 
 	this.forEach(function(entity) {
 		entity.transform('r' + degree + ',' + cx + ',' + cy + '...');
@@ -103,7 +103,9 @@ function Pin(component, name)
 			this.connectionLine.attr({'path': 'M' + ox + ',' + oy + 'L' + (ox + dx) + ',' + (oy + dy)});
 		}, 
 		
-		start = function(x, y) {
+		start = function(_x, _y, evt) {
+			var _p = this.getPos(), x = _p.x, y = _p.y;
+			
 			if (!this.connectionLine)
 				this.connectionLine = MooChip.paper.path('M' + x + ',' + y + 'L' + x + ',' + y).attr({'stroke': '#10097B', 'stroke-width': 3}); else
 					this.connectionLine.attr({'path': 'M' + x + ',' + y + 'L' + x + ',' + y});
@@ -113,7 +115,7 @@ function Pin(component, name)
 		},
 		
 		end = function(evt) {
-			var _components = MooChip.scheme.components, target = false, x1 = evt.clientX, y1 = evt.clientY;
+			var _components = MooChip.scheme.components, target = false, x1 = evt.layerX, y1 = evt.layerY;
 			
 			// check if selected component is a wire
 			
@@ -177,6 +179,10 @@ function Component(type, name)
 	this.rotate = function(degree) {
 		this.entity.rotate(degree);
 		this.pinEntity.rotate(degree);
+		
+		if (this.entity.selectionRect)
+			this.entity.selectionRect.rotate(degree);
+		
 		MooChip.scheme.updateConnectionLines(this);
 	};
 	
@@ -220,13 +226,16 @@ function Scheme() {
 		for (var i = 0; i < components.length; i++) {
 			for (var t = 0; t < components[i].entity.length; t++) {
 				if (components[i].entity[t] == entity) {
-					if (MooChip.scheme.selectedComponent && components[i] != MooChip.scheme.selectedComponent && MooChip.scheme.selectedComponent.entity.selectionRect)
+					if (MooChip.scheme.selectedComponent && components[i] != MooChip.scheme.selectedComponent && MooChip.scheme.selectedComponent.entity.selectionRect) {
 						MooChip.scheme.selectedComponent.entity.selectionRect.remove();
+						MooChip.scheme.selectedComponent.entity.selectionRect = null;
+					}
 						
 					MooChip.scheme.selectedComponent = components[i];
 					
 					var _bb = MooChip.scheme.selectedComponent.entity.getBBox();
-					MooChip.scheme.selectedComponent.entity.selectionRect = MooChip.paper.rect(_bb.x, _bb.y, _bb.width, _bb.height).attr({fill: "none", stroke: "#666", "stroke-dasharray": "- "});
+					MooChip.scheme.selectedComponent.entity.selectionRect = MooChip.paper.set();
+					MooChip.scheme.selectedComponent.entity.selectionRect.push(MooChip.paper.rect(_bb.x, _bb.y, _bb.width, _bb.height).attr({fill: "none", stroke: "#666", "stroke-dasharray": "- "}));
 					
 					return;
 				}
@@ -234,8 +243,10 @@ function Scheme() {
 		}
 		
 		for (var i = 0; i < components.length; i++) {
-			if (components[i].entity.selectionRect)
+			if (components[i].entity.selectionRect) {
 				components[i].entity.selectionRect.remove();
+				components[i].entity.selectionRect = null;
+			}
 		}
 			
 		MooChip.scheme.selectedComponent = null;
