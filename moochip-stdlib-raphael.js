@@ -28,27 +28,7 @@ Resistor = function(name, R) {
 	
 	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
-	var entity = tmp.entity, pinEntity = tmp.pinEntity,
-	
-		start = function() {
-			entity.oBB = entity.getBBox();
-			pinEntity.oBB = pinEntity.getBBox();
-		},
-		
-		move = function(dx, dy) {
-			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
-			// entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			entity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
-			// pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			pinEntity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
-			MooChip.scheme.updateConnectionLines(entity.component);
-		},
-		
-		up = function() {
-			console.log(name, ' dropped!');
-		};
-	
-	entity.drag(move, start, up);
+	tmp.updateDragFunctions();
 	
 	tmp.invoke = function(pin, I, U) {
 		if (pin == this.pin('a') && this.pin('b').src == 'negative') {
@@ -99,25 +79,7 @@ Diode = function(name) {
 	
 	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
-	var entity = tmp.entity, pinEntity = tmp.pinEntity,
-	
-		start = function() {
-			entity.oBB = entity.getBBox();
-			pinEntity.oBB = pinEntity.getBBox();
-		},
-		
-		move = function(dx, dy) {
-			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
-			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			MooChip.scheme.updateConnectionLines(entity.component);
-		},
-		
-		up = function() {
-			console.log(name, ' dropped!');
-		};
-	
-	entity.drag(move, start, up);
+	tmp.updateDragFunctions();
 	
 	tmp.invoke = function(pin, I, U) {
 		if (pin == this.pin('anode') && this.pin('cathode').src == 'negative') {
@@ -147,26 +109,8 @@ Wire = function(name) {
 	tmp.entity.component = tmp;
 
 	tmp.pinEntity = MooChip.paper.set();
-	
-	var entity = tmp.entity, pinEntity = tmp.pinEntity,
-	
-		start = function() {
-			entity.oBB = entity.getBBox();
-			pinEntity.oBB = pinEntity.getBBox();
-		},
 		
-		move = function(dx, dy) {
-			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
-			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			MooChip.scheme.updateConnectionLines(entity.component);
-		},
-		
-		up = function() {
-			console.log(name, ' dropped!');
-		};
-	
-	entity.drag(move, start, up);
+	tmp.updateDragFunctions();
 	
 	tmp.invoke = function(pin, I, U) {
 		for (var i = 0; i < this.pins.length; i++) {
@@ -233,25 +177,7 @@ DCSource = function(name, U, I) {
 	
 	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
-	var entity = tmp.entity, pinEntity = tmp.pinEntity,
-	
-		start = function() {
-			entity.oBB = entity.getBBox();
-			pinEntity.oBB = pinEntity.getBBox();
-		},
-		
-		move = function(dx, dy) {
-			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
-			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			MooChip.scheme.updateConnectionLines(entity.component);
-		},
-		
-		up = function() {
-			console.log(name, ' dropped!');
-		};
-	
-	entity.drag(move, start, up);
+	tmp.updateDragFunctions();
 	
 	tmp.invoke = function(pin, I, U) {
 		if (pin == this.pin('negative')) {

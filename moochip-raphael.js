@@ -28,17 +28,11 @@ Raphael.st.rotate = function(degree) {
 					bb.y2 = e.y + e.height; 
 	});
 
-	// var cx = ((bb.x2 - bb.x1) / 2.0), cy = ((bb.y2 - bb.y1) / 2.0);
-	var cx = ((bb.x2 - bb.x1) ), cy = (bb.y2 - bb.y1);
+	var cx = bb.x1 + ((bb.x2 - bb.x1) / 2.0), cy = bb.y1 + ((bb.y2 - bb.y1) / 2.0);
 
 	this.forEach(function(entity) {
-			entity.rotate(degree, cx, cy);
-			entity._.bbox.x = cx;
-			entity._.bbox.y = cy;
+		entity.transform('r' + degree + ',' + cx + ',' + cy + '...');
 	});
-	// 1) Find total set' BBox with transformations
-	// 2) Find that BBox' center
-	// 3) Rotate each item of the set around that center with **degree**
 };
 
 Raphael.el.getPos = function() {
@@ -178,6 +172,33 @@ function Component(type, name)
 	
 	this.entity = null;
 	this.pinEntity = null;
+	
+	this.rotate = function(degree) {
+		this.entity.rotate(degree);
+		this.pinEntity.rotate(degree);
+	};
+	
+	this.updateDragFunctions = function() {
+		var entity = this.entity, pinEntity = this.pinEntity, name = this.name,
+		
+		start = function() {
+			entity.oBB = entity.getBBox();
+			pinEntity.oBB = pinEntity.getBBox();
+		},
+		
+		move = function(dx, dy) {
+			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
+			entity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
+			pinEntity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
+			MooChip.scheme.updateConnectionLines(entity.component);
+		},
+		
+		up = function() {
+			console.log(name, ' dropped!');
+		};
+		
+		this.entity.drag(move, start, up);
+	};
 }
 
 function Scheme() {
