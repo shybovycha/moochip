@@ -33,19 +33,16 @@ Raphael.st.rotate = function(degree) {
 	this.forEach(function(entity) {
 		entity.transform('r' + degree + ',' + cx + ',' + cy + '...');
 	});
+	
+	if (this.entity) {
+		MooChip.scheme.updateConnectionLines(this.entity.component);
+	}
 };
 
 Raphael.el.getPos = function() {
-	var x = this.ox || 0, y = this.oy || 0, tr = this.transform();
-
-	for (var j = 0; j < tr.length; j++) {
-		if (tr[j][0] == 't') {
-			x += tr[j][1];
-			y += tr[j][2];
-		}
-	}
+	var _bb = this.getBBox();
 	
-	return { 'x': x, 'y': y };
+	return { x: _bb.x + (_bb.width / 2.0), y: _bb.y + (_bb.height / 2.0) };
 };
 
 function Pin(component, name)
@@ -176,6 +173,7 @@ function Component(type, name)
 	this.rotate = function(degree) {
 		this.entity.rotate(degree);
 		this.pinEntity.rotate(degree);
+		MooChip.scheme.updateConnectionLines(this);
 	};
 	
 	this.updateDragFunctions = function() {
@@ -206,6 +204,22 @@ function Scheme() {
 	this.connectionLines = [];
 	this.src = null;
 	this.queue = [];
+	this.selectedComponent = null;
+	
+	MooChip.paper.canvas.onclick = function(e) {
+		var components = MooChip.scheme.components, entity = MooChip.paper.getElementByPoint(e.clientX, e.clientY);
+		
+		MooChip.scheme.selectedComponent = null;
+		
+		for (var i = 0; i < components.length; i++) {
+			for (var t = 0; t < components[i].entity.length; t++) {
+				if (components[i].entity[t] == entity) {
+					MooChip.scheme.selectedComponent = components[i];
+					return;
+				}
+			}
+		}
+	};
 	
 	this.connectionLine = function(pinA, pinB) {
 		var lines = this.connectionLines, res = null;
