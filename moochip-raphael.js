@@ -9,6 +9,33 @@ MooChip.distance = function(x1, y1, x2, y2) {
 };
 
 Raphael.st.rotate = function(degree) {
+	var _bb = this[0].getBBox();
+	var bb  = { x1: _bb.x, y1: _bb.y, x2: _bb.x, y2: _bb.y };
+
+	this.forEach(function(entity) { 
+			var e = entity.getBBox(); 
+			
+			if (e.x < bb.x1) 
+					bb.x1 = e.x; 
+					
+			if (e.y < bb.y1) 
+					bb.y1 = e.y; 
+					
+			if ((e.x + e.width) > bb.x2) 
+					bb.x2 = e.x + e.width; 
+					
+			if ((e.y + e.height) > bb.y2) 
+					bb.y2 = e.y + e.height; 
+	});
+
+	// var cx = ((bb.x2 - bb.x1) / 2.0), cy = ((bb.y2 - bb.y1) / 2.0);
+	var cx = ((bb.x2 - bb.x1) ), cy = (bb.y2 - bb.y1);
+
+	this.forEach(function(entity) {
+			entity.rotate(degree, cx, cy);
+			entity._.bbox.x = cx;
+			entity._.bbox.y = cy;
+	});
 	// 1) Find total set' BBox with transformations
 	// 2) Find that BBox' center
 	// 3) Rotate each item of the set around that center with **degree**

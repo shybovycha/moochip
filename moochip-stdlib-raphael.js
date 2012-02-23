@@ -15,7 +15,7 @@ Resistor = function(name, R) {
 	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
 	tmp.entity.push(MooChip.paper.path('M80,40L100,40'));
 	tmp.entity.component = tmp;
-	
+
 	tmp.pinEntity = MooChip.paper.set();
 	
 	var pinA = tmp.pin('a'), pinB = tmp.pin('b');
@@ -37,8 +37,10 @@ Resistor = function(name, R) {
 		
 		move = function(dx, dy) {
 			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
-			entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
-			pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			// entity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			entity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
+			// pinEntity.translate(entity.oBB.x - bb.x + dx, entity.oBB.y - bb.y + dy);
+			pinEntity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
 			MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
