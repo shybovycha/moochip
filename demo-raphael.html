@@ -11,36 +11,10 @@
 		
 		<script type="text/javascript">
 		window.onload = function () {
-			var R = Raphael('holder'); //0, 50, "100%", "80%");
+			var R = Raphael('holder');
 			
 			MooChip.paper = R;
 			MooChip.scheme = new Scheme();
-			
-			/*var a = new DCSource('src1', 5.0);
-			Cs.add(a);
-			
-			var a = new Resistor('r1', 1);
-			Cs.add(a);
-			
-			var a = new Diode('vd1');
-			Cs.add(a);
-			
-			var a = new Wire('-1');
-			Cs.add(a);
-			
-			var a = new Wire('-2');
-			Cs.add(a);*/
-			
-			/*Cs.component('-1').connect(Cs.component('vd1').pin('cathode'));
-			Cs.component('-2').connect(Cs.component('vd1').pin('anode'));
-			
-			Cs.component('-1').connect(Cs.component('src1').pin('positive'));
-			Cs.component('-1').connect(Cs.component('r1').pin('a'));
-			
-			Cs.component('-2').connect(Cs.component('src1').pin('negative'));
-			Cs.component('-2').connect(Cs.component('r1').pin('b'));
-			
-			Cs.run(Cs.component('src1'));*/
 		};
 		
 		function add(type) {
@@ -75,18 +49,26 @@
 		}
 		
 		function rotate_selected() {
-			MooChip.scheme.selectedComponent.rotate(90);
+			if (MooChip.scheme.selectedComponent)
+				MooChip.scheme.selectedComponent.rotate(90);
+		}
+		
+		function remove_selected() {
+			if (MooChip.scheme.selectedComponent)
+				MooChip.scheme.remove(MooChip.scheme.selectedComponent);
 		}
         </script>
     </head>
 	
     <body>
 		<div class="menu">
-			<a href="#" onclick="add('resistor')">resistor</a>
-			<a href="#" onclick="add('diode')">diode</a>
-			<a href="#" onclick="add('dc_source')">DC source</a>
-			<a href="#" onclick="add('wire')">wire</a>
-			<a href="#" onclick="rotate_selected()">rotate selected</a>
+			<a href="#" onclick="add('resistor')" title="create a new resistor">resistor</a>
+			<a href="#" onclick="add('diode')" title="create a new diode">diode</a>
+			<a href="#" onclick="add('dc_source')" title="create a new DC source">DC source</a>
+			<a href="#" onclick="add('wire')" title="create a new wire">wire</a>
+			&nbsp;|&nbsp;
+			<a href="#" onclick="rotate_selected()" title="rotate selected component 90&deg; clockwise">rotate</a>
+			<a href="#" onclick="remove_selected()" title="remove selected component">remove</a>
 		</div>
 		
         <div id="holder"></div>

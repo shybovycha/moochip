@@ -291,6 +291,42 @@ function Scheme() {
 		}
 	}
 	
+	this.remove = function(component) {
+		if (component.entity.selectionRect)
+			component.entity.selectionRect.remove();
+			
+		if (component.entity)
+			component.entity.remove();
+			
+		if (component.pinEntity)
+			component.pinEntity.remove();
+			
+		for (var i = 0; i < component.pins.length; i++) {
+			var pin = component.pins[i];
+			
+			for (var t = 0; t < pin.connections.length; t++) {
+				var remoteConnections = pin.connections[t].connections;
+				
+				for (var j = 0; j < remoteConnections.length; j++) {
+					if (remoteConnections[j] == pin) {
+						pin.connections[t].connections = remoteConnections.slice(0, j).concat(remoteConnections.slice(j + 1));
+					}
+				}
+			}
+			
+			var lines = this.connectionLines;
+			
+			for (var t = 0; t < lines.length; t++) {
+				var line = lines[t];
+				
+				if (line.pinA == pin.entity || line.pinB == pin.entity) {
+					line.remove();
+					lines = lines.slice(0, t).concat(lines.slice(t + 1));
+				}
+			}
+		}
+	};
+	
 	this.add = function(component) {
 		this.components.push(component);
 	};
