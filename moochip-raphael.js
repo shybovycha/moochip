@@ -8,7 +8,7 @@ MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 };
 
-Raphael.st.rotate = function(degree) {
+Raphael.st.getBBox = function() {
 	var _bb = this[0].getBBox();
 	var bb  = { x1: _bb.x, y1: _bb.y, x2: _bb.x, y2: _bb.y };
 
@@ -27,8 +27,12 @@ Raphael.st.rotate = function(degree) {
 			if ((e.y + e.height) > bb.y2) 
 					bb.y2 = e.y + e.height; 
 	});
+	
+	return { x: bb.x1, y: bb.y1, width: bb.x2 - bb.x1, height: bb.y2 - bb.y1};
+};
 
-	var cx = bb.x1 + ((bb.x2 - bb.x1) / 2.0), cy = bb.y1 + ((bb.y2 - bb.y1) / 2.0);
+Raphael.st.rotate = function(degree) {
+	var bb = this.getBBox(), cx = bb.x1 + ((bb.x2 - bb.x1) / 2.0), cy = bb.y1 + ((bb.y2 - bb.y1) / 2.0);
 
 	this.forEach(function(entity) {
 		entity.transform('r' + degree + ',' + cx + ',' + cy + '...');
@@ -188,6 +192,10 @@ function Component(type, name)
 			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
 			entity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
 			pinEntity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
+			
+			if (entity.selectionRect)
+				entity.selectionRect.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
+				
 			MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
@@ -209,16 +217,28 @@ function Scheme() {
 	MooChip.paper.canvas.onclick = function(e) {
 		var components = MooChip.scheme.components, entity = MooChip.paper.getElementByPoint(e.clientX, e.clientY);
 		
-		MooChip.scheme.selectedComponent = null;
-		
 		for (var i = 0; i < components.length; i++) {
 			for (var t = 0; t < components[i].entity.length; t++) {
 				if (components[i].entity[t] == entity) {
+					if (MooChip.scheme.selectedComponent && components[i] != MooChip.scheme.selectedComponent && MooChip.scheme.selectedComponent.entity.selectionRect)
+						MooChip.scheme.selectedComponent.entity.selectionRect.remove();
+						
 					MooChip.scheme.selectedComponent = components[i];
+					
+					var _bb = MooChip.scheme.selectedComponent.entity.getBBox();
+					MooChip.scheme.selectedComponent.entity.selectionRect = MooChip.paper.rect(_bb.x, _bb.y, _bb.width, _bb.height).attr({fill: "none", stroke: "#666", "stroke-dasharray": "- "});
+					
 					return;
 				}
 			}
 		}
+		
+		for (var i = 0; i < components.length; i++) {
+			if (components[i].entity.selectionRect)
+				components[i].entity.selectionRect.remove();
+		}
+			
+		MooChip.scheme.selectedComponent = null;
 	};
 	
 	this.connectionLine = function(pinA, pinB) {
