@@ -22,10 +22,10 @@ end
 
 gem 'jquery-rails'
 
-group :prroduction do
-	gem "therubyracer-heroku"
+#group :prroduction do
+#	gem "therubyracer-heroku"
 	gem "pg"
-end
+#end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
