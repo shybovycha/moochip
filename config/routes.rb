@@ -1,4 +1,5 @@
 Moochip::Application.routes.draw do
+  get "/"
   get "home/demo_console"
   get "home/demo_raphael"
 
