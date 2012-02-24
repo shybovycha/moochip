@@ -4,11 +4,10 @@
         <meta charset="utf-8" />
         <title>moochip raphael demo</title>
         
-		<script type="text/javascript" src="raphael.js"></script>
-        
-		<script type="text/javascript" src="moochip-raphael.js"></script>
-		<script type="text/javascript" src="moochip-stdlib-raphael.js"></script>
-		
+        <%= javascript_include_tag 'raphael.js' %>
+        <%= javascript_include_tag 'moochip-raphael.js' %>
+        <%= javascript_include_tag 'moochip-stdlib-raphael.js' %>
+				
 		<script type="text/javascript">
 		window.onload = function () {
 			var R = Raphael('holder');
