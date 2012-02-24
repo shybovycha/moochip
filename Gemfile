@@ -23,6 +23,7 @@ end
 gem 'jquery-rails'
 
 group :prroduction do
+	gem "therubyracer-heroku"
 	gem "pg"
 end
 
