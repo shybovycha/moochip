@@ -1,7 +1,5 @@
 Moochip::Application.routes.draw do
-  get "/"
-  get "home/demo_console"
-  get "home/demo_raphael"
+  match "/" => "home#demo_raphael"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
