@@ -26,8 +26,6 @@ Resistor = function(name, R) {
 	tmp.pinEntity.push(pinA.entity);
 	tmp.pinEntity.push(pinB.entity);
 	
-	//tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
-	
 	tmp.updateDragFunctions();
 	
 	tmp.invoke = function(pin, I, U) {
@@ -43,6 +41,13 @@ Resistor = function(name, R) {
 			
 			console.log(this.name, '!');
 		}
+
+		this.invokeGlow = this.entity.glow({'color':'#D1EE30'})
+	};
+	
+	this.uninvoke = function() {
+		if (this.invokeGlow)
+			this.invokeGlow.remove();
 	};
 	
 	tmp.conduction = function(pinA, pinB) {
@@ -77,8 +82,6 @@ Diode = function(name) {
 	tmp.pinEntity.push(anode.entity);
 	tmp.pinEntity.push(cathode.entity);
 	
-	//tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
-	
 	tmp.updateDragFunctions();
 	
 	tmp.invoke = function(pin, I, U) {
@@ -88,6 +91,13 @@ Diode = function(name) {
 			
 			console.log(this.name, '!');
 		}
+		
+		this.invokeGlow = this.entity.glow({'color':'#D1EE30'})
+	};
+	
+	this.uninvoke = function() {
+		if (this.invokeGlow)
+			this.invokeGlow.remove();
 	};
 	
 	tmp.conduction = function(pinA, pinB) {
@@ -182,8 +192,6 @@ DCSource = function(name, U, I) {
 	
 	tmp.pinEntity.push(pinA.entity);
 	tmp.pinEntity.push(pinB.entity);
-	
-	//tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
 	tmp.updateDragFunctions();
 	

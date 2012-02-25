@@ -56,6 +56,18 @@
 			if (MooChip.scheme.selectedComponent)
 				MooChip.scheme.remove(MooChip.scheme.selectedComponent);
 		}
+		
+		function reset_scheme() {
+			MooChip.scheme.resetComponentStates();
+		}
+		
+		function simple_step() {
+			MooChip.scheme.singleStep();
+		}
+		
+		function full_step() {
+			MooChip.scheme.fullCircleStep();
+		}
         </script>
     </head>
 	
@@ -68,6 +80,10 @@
 			&nbsp;|&nbsp;
 			<a href="#" onclick="rotate_selected()" title="rotate selected component 90&deg; clockwise">rotate</a>
 			<a href="#" onclick="remove_selected()" title="remove selected component">remove</a>
+			&nbsp;|&nbsp;
+			<a href="#" onclick="reset_scheme()" title="stop any executions and reset components' states">reset</a>
+			<a href="#" onclick="simple_step()" title="step execution one component along">simple step</a>
+			<a href="#" onclick="full_step()" title="step execution all components at once">full step</a>
 		</div>
 		
         <div id="holder"></div>

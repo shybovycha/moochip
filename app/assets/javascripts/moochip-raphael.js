@@ -371,6 +371,22 @@ function Scheme() {
 		}
 	}
 	
+	this.resetComponentStates = function() {
+		MooChip.stopRunning = true;
+		
+		for (var i = 0; i < this.components.length) {
+			var component = this.components[i];
+			
+			if (component.uninvoke)
+				component.uninvoke();
+			
+			for (var t = 0; t < component.pins.length; t++) {
+				component.pins[t].i = null;
+				component.pins[t].u = null;
+			}
+		}
+	}
+	
 	this.isSrcNegativeReachable = function(pin, src) {
 		var q = [ pin ], v = [];
 		
@@ -496,9 +512,9 @@ function Scheme() {
 		}
 	}
 	
-	MooChip.stopRunning = false;
-	
 	this.run = function() {
+		MooChip.stopRunning = false;
+		
 		this.findDCSource();
 		
 		if (!this.src) {
