@@ -476,8 +476,6 @@ function Scheme() {
 		
 		var negativeSrcPin = this.src.pin('negative');
 		
-		this.queue = [ [ negativeSrcPin ] ];
-		
 		while (this.queue.length > 0) {
 			if (stopFlag >= controlFlag) {
 				console.log('Stopping forward iterations');
