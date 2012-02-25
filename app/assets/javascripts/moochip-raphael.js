@@ -483,8 +483,10 @@ function Scheme() {
 			}
 			
 			for (var i = 0; i < this.queue.length; i++) {
-				if (this.queue[i] == negativeSrcPin)
+				for (var t = 0; t < this.queue[i].length; t++) {
+					if (this.queue[i][t] == negativeSrcPin)
 					stopFlag++;
+				}
 			}
 			
 			this.singleStep();
