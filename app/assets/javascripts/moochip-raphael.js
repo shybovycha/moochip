@@ -405,6 +405,8 @@ function Scheme() {
 				component.pins[t].u = null;
 			}
 		}
+		
+		this.queue = [];
 	}
 	
 	this.isSrcNegativeReachable = function(pin, src) {
@@ -456,6 +458,11 @@ function Scheme() {
 		
 		for (var ze = 0; ze < _it.length; ze++) {
 			var p = _it[ze];
+			
+			if (!p || !p.component) {
+				console.log('Pin is invalid', p);
+				continue;
+			}
 			
 			for (var i = 0; i < p.component.pins.length; i++) {
 				var p2 = p.component.pins[i];
@@ -512,7 +519,7 @@ function Scheme() {
 		
 		this.queue = [ _tmp ];
 		
-		var negativeSrcPin = this.src.pin('negative');
+		var negativeSrcPin = this.src.pin('negative'), loopControlFl = 0;
 		
 		while (this.queue.length > 0) {
 			if (stopFlag >= controlFlag) {
@@ -528,23 +535,36 @@ function Scheme() {
 				}
 			}
 			
-			var _tmp = [];
+			loopControlFl = 0;
 			
-			for (var i = 0; i < this.queue.length; i++) {
-				_tmp.push(this.queue[i].name);
+			for (var i = 0; i < this.components.length; i++) {
+				var component = this.components[i];
+				
+				for (var t = 0; t < component.pins.length; t++) {
+					var pin = component.pins[t];
+					
+					if (!pin.i || !pin.u)
+						loopControlFl++;
+				}
 			}
-			
+						
 			this.singleStep();
 			
-			var loopControlCntr = 0;
+			var loopControlFlCheck = 0;
 			
-			for (var i = 0; i < this.queue.length; i++) {
-				if (this.queue[i].name == _tmp[i])
-					loopControlCntr++; 
+			for (var i = 0; i < this.components.length; i++) {
+				var component = this.components[i];
+				
+				for (var t = 0; t < component.pins.length; t++) {
+					var pin = component.pins[t];
+					
+					if (!pin.i || !pin.u)
+						loopControlFlCheck++;
+				}
 			}
 			
-			if (loopControlCntr >= this.queue.length && loopControlCntr >= _tmp.length && loopControlCntr > 0) {
-				console.log('Queue stayed the same - stopping forward iterations', _tmp, this.queue);
+			if (loopControlFl == loopControlFlCheck) {
+				console.log('No component changes - stopping forward iterations');
 				console.log('Queue left: ', this.queue);
 				return;
 			}
