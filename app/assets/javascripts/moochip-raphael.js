@@ -4,6 +4,7 @@ MooChip.paper = null;
 MooChip.scheme = null;
 MooChip.stopRunning = false;
 MooChip.gridSize = 25;
+MooChip.invokeGlowColor = '#3AF7EE';
 
 MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -50,14 +51,17 @@ Raphael.st.rotate = function(degree) {
 
 Raphael.st.glow = function(attrs) {
 	this.forEach(function(entity) {
-		entity.glowEntity = entity.glow(attrs);
+		if (!entity.glowEntity)
+			entity.glowEntity = entity.glow(attrs);
 	});
 };
 
 Raphael.st.unglow = function() {
 	this.forEach(function(entity) {
-		if (entity.glowEntity)
+		if (entity.glowEntity) {
 			entity.glowEntity.remove();
+			entity.glowEntity = null;
+		}
 	});
 };
 
@@ -310,6 +314,9 @@ function Scheme() {
 		if (component.entity.selectionRect)
 			component.entity.selectionRect.remove();
 			
+		component.entity.unglow();
+		component.pinEntity.unglow();
+			
 		if (component.entity)
 			component.entity.remove();
 			
@@ -320,12 +327,11 @@ function Scheme() {
 			var pin = component.pins[i];
 			
 			for (var t = 0; t < pin.connections.length; t++) {
-				var remoteConnections = pin.connections[t].connections;
-				
-				for (var j = 0; j < remoteConnections.length; j++) {
-					if (remoteConnections[j] == pin) {
-						pin.connections[t].connections = remoteConnections.slice(0, j).concat(remoteConnections.slice(j + 1));
-						j = 0;
+				for (var j = 0; j < pin.connections[t].connections.length; j++) {
+					if (pin.connections[t].connections[j] == pin) {
+						pin.connections[t].connections = pin.connections[t].connections.slice(0, j).concat(pin.connections[t].connections.slice(j + 1));
+						t = 0;
+						break;
 					}
 				}
 			}
@@ -530,12 +536,17 @@ function Scheme() {
 			
 			this.singleStep();
 			
+			var loopControlCntr = 0;
+			
 			for (var i = 0; i < this.queue.length; i++) {
-				if (this.queue[i].name == _tmp[i]) {
-					console.log('Queue stayed the same - stopping forward iterations');
-					console.log('Queue left: ', this.queue);
-					return;
-				}
+				if (this.queue[i].name == _tmp[i])
+					loopControlCntr++; 
+			}
+			
+			if (loopControlCntr >= this.queue.length && loopControlCntr >= _tmp.length && loopControlCntr > 0) {
+				console.log('Queue stayed the same - stopping forward iterations', _tmp, this.queue);
+				console.log('Queue left: ', this.queue);
+				return;
 			}
 		}
 	}

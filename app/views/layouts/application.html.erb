@@ -1,14 +1,38 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Moochip</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+	<head>
+		<meta charset="utf-8" />
 
-<%= yield %>
+		<%= stylesheet_link_tag    "application", :media => "all" %>
+		
+		<% if (@demo == 'console') then %>
+			<title>Moochip - Console Demo</title>
+			
+			<%= javascript_include_tag 'moochip.js' %>
+			<%= javascript_include_tag 'moochip-stdlib.js' %>
+			<%= javascript_include_tag 'demo-console.js' %>
+		<% else %>
+			<title>Moochip - Raphael Demo</title>
+			
+			<%= javascript_include_tag 'raphael.js' %>
+			<%= javascript_include_tag 'moochip-raphael.js' %>
+			<%= javascript_include_tag 'moochip-stdlib-raphael.js' %>
+			<%= javascript_include_tag 'demo-raphael.js' %>
+		<% end %>
+		
+		<%= csrf_meta_tags %>
+	</head>
 
-</body>
+	<body>
+		<div class="navigation-menu">
+			<ul>
+				<li><a href="/">About</a></li>
+				<li><a href="/demo-raphael">Let's start!</a></li>
+				<li><a href="/developers">Developers</a></li>
+			</ul>
+		</div>
+		
+		<%= yield %>
+
+	</body>
 </html>

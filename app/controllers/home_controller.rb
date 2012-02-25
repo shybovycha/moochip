@@ -1,12 +1,15 @@
 class HomeController < ApplicationController
   def index
   end
+  
+  def developers
+  end
 
   def demo_console
-    render :layout => false
+    @demo = 'console'
   end
 
   def demo_raphael
-    render :layout => false
+    @demo = 'raphael'
   end
 end

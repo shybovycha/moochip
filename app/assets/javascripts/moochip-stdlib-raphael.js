@@ -35,7 +35,7 @@ Resistor = function(name, R) {
 			
 			console.log(this.name, '!');
 			
-			this.entity.glow({'color':'#D1EE30'})
+			this.entity.glow({'color': MooChip.invokeGlowColor})
 		} else
 		if (pin == this.pin('b') && this.pin('a').src == 'negative') {
 			this.pin('a').i = I;
@@ -43,7 +43,7 @@ Resistor = function(name, R) {
 			
 			console.log(this.name, '!');
 			
-			this.entity.glow({'color':'#D1EE30'})
+			this.entity.glow({'color': MooChip.invokeGlowColor})
 		}
 	};
 	
@@ -92,7 +92,7 @@ Diode = function(name) {
 			
 			console.log(this.name, '!');
 			
-			this.entity.glow({'color':'#D1EE30'})
+			this.entity.glow({'color': MooChip.invokeGlowColor})
 		}
 	};
 	
