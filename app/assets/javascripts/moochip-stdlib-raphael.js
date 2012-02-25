@@ -34,20 +34,21 @@ Resistor = function(name, R) {
 			this.pin('b').u = U;
 			
 			console.log(this.name, '!');
+			
+			this.entity.glow({'color':'#D1EE30'})
 		} else
 		if (pin == this.pin('b') && this.pin('a').src == 'negative') {
 			this.pin('a').i = I;
 			this.pin('a').u = U;
 			
 			console.log(this.name, '!');
+			
+			this.entity.glow({'color':'#D1EE30'})
 		}
-
-		this.invokeGlow = this.entity.glow({'color':'#D1EE30'})
 	};
 	
-	this.uninvoke = function() {
-		if (this.invokeGlow)
-			this.invokeGlow.remove();
+	tmp.uninvoke = function() {
+		this.entity.unglow();
 	};
 	
 	tmp.conduction = function(pinA, pinB) {
@@ -90,14 +91,13 @@ Diode = function(name) {
 			this.pin('cathode').u = U;
 			
 			console.log(this.name, '!');
+			
+			this.entity.glow({'color':'#D1EE30'})
 		}
-		
-		this.invokeGlow = this.entity.glow({'color':'#D1EE30'})
 	};
 	
-	this.uninvoke = function() {
-		if (this.invokeGlow)
-			this.invokeGlow.remove();
+	tmp.uninvoke = function() {
+		this.entity.unglow();
 	};
 	
 	tmp.conduction = function(pinA, pinB) {

@@ -2,6 +2,7 @@ function MooChip() {}
 
 MooChip.paper = null;
 MooChip.scheme = null;
+MooChip.stopRunning = false;
 MooChip.gridSize = 25;
 
 MooChip.distance = function(x1, y1, x2, y2) {
@@ -45,6 +46,19 @@ Raphael.st.rotate = function(degree) {
 	if (this.entity) {
 		MooChip.scheme.updateConnectionLines(this.entity.component);
 	}
+};
+
+Raphael.st.glow = function(attrs) {
+	this.forEach(function(entity) {
+		entity.glowEntity = entity.glow(attrs);
+	});
+};
+
+Raphael.st.unglow = function() {
+	this.forEach(function(entity) {
+		if (entity.glowEntity)
+			entity.glowEntity.remove();
+	});
 };
 
 Raphael.el.getPos = function() {
@@ -374,7 +388,7 @@ function Scheme() {
 	this.resetComponentStates = function() {
 		MooChip.stopRunning = true;
 		
-		for (var i = 0; i < this.components.length) {
+		for (var i = 0; i < this.components.length; i++) {
 			var component = this.components[i];
 			
 			if (component.uninvoke)
@@ -498,7 +512,7 @@ function Scheme() {
 			if (stopFlag >= controlFlag) {
 				console.log('Stopping forward iterations');
 				console.log('Queue left: ', this.queue);
-				break;
+				return;
 			}
 			
 			for (var i = 0; i < this.queue.length; i++) {
@@ -508,7 +522,21 @@ function Scheme() {
 				}
 			}
 			
+			var _tmp = [];
+			
+			for (var i = 0; i < this.queue.length; i++) {
+				_tmp.push(this.queue[i].name);
+			}
+			
 			this.singleStep();
+			
+			for (var i = 0; i < this.queue.length; i++) {
+				if (this.queue[i].name == _tmp[i]) {
+					console.log('Queue stayed the same - stopping forward iterations');
+					console.log('Queue left: ', this.queue);
+					return;
+				}
+			}
 		}
 	}
 	
