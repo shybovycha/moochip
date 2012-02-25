@@ -466,13 +466,15 @@ function Scheme() {
 		var _tmp = [];
 		
 		this.src.invoke(this.src.pin('negative'));
-		_tmp = (this.src.pin('positive').connections);
-		this.queue = [ _tmp ];
 		
-		for (var i = 0; i < this.queue.length; i++) {
-			this.queue[i].i = this.src.pin('positive').i;
-			this.queue[i].u = this.src.pin('positive').u;
+		_tmp = (this.src.pin('positive').connections);
+		
+		for (var i = 0; i < _tmp.length; i++) {
+			_tmp[i].i = this.src.pin('positive').i;
+			_tmp[i].u = this.src.pin('positive').u;
 		}
+		
+		this.queue = [ _tmp ];
 		
 		var negativeSrcPin = this.src.pin('negative');
 		
