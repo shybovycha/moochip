@@ -463,13 +463,16 @@ function Scheme() {
 		
 		var stopFlag = 0, controlFlag = this.src.pin('negative').connections.length;
 		
-		/*this.src.invoke(this.src.pin('negative'));
-		this.queue = this.queue.concat(this.src.pin('positive').connections);
+		var _tmp = [];
+		
+		this.src.invoke(this.src.pin('negative'));
+		_tmp = (this.src.pin('positive').connections);
+		this.queue = [].push(_tmp);
 		
 		for (var i = 0; i < this.queue.length; i++) {
 			this.queue[i].i = this.src.pin('positive').i;
 			this.queue[i].u = this.src.pin('positive').u;
-		}*/
+		}
 		
 		var negativeSrcPin = this.src.pin('negative');
 		
