@@ -11,7 +11,7 @@
 			<%= javascript_include_tag 'moochip.js' %>
 			<%= javascript_include_tag 'moochip-stdlib.js' %>
 			<%= javascript_include_tag 'demo-console.js' %>
-		<% else %>
+		<% elsif (@demo) then %>
 			<title>Moochip - Raphael Demo</title>
 			
 			<%= javascript_include_tag 'raphael.js' %>

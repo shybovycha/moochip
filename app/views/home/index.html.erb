@@ -1,0 +1,58 @@
+<h2>Let me introduce you...</h2>
+<p>
+	<em>What in the world is this?</em> - you'll probably ask when you first visit this website.<br />
+	This is going to become an interactive electronics tutorial. If i will finish it, of course.<br />
+
+	<br />
+
+	<em>Interactive electronics tutorial? What's that?</em> See, when you do want to learn something,
+	it's always better to see it in action than just read tons of text 'bout it. The same is true fofr electronics.
+	It's really hard to understand the difference between <em>p-n-p</em> an <em>n-p-n</em> transistors when you
+	did not even seen them before! For example, i did not understand that difference until i started this project 
+	<%= image_tag 'smilies/smiley-razz.png' %><br />
+
+	<br />
+
+	<em>p-n-p? Transistor? Too many difficult words!</em> Just click in the menu "Let's start" above and dive
+	into the world of electronics!
+</p>
+
+<h2>What's gonna be clicked next?</h2>
+<p>
+	<em>Well, i see some strange pictures and light rectangle. So, what's next?</em> That rectangle is a 
+	<em>scheme sheet</em>. It is the right place to create a schemes - a set of connected symbols,
+	intertwined into a diabolic picture called <em>(electronic) circuit</em>. It shows the heretics
+	called "engineers", which part should be connected to which parts and how the device will work at all.<br />
+
+	<br />
+
+	The rectangle with odd pictures above the sheet is the <em>toolbar</em>. It will become your mostly used
+	part of the site (taking into account the fact you want to <strong>experiment</strong> mostly).
+	It is divided into three parts:
+	
+	<ul>
+		<li>
+			<strong>the component container</strong> - the place, where all the components the system knows
+			are located. They are represented by their <em>symbols</em> - that strange pictures
+			as rectangles, triangles, circles and lines. Click on one of them and it will appear
+			in the <em>top-left</em> corner of your sheet. Then you'll be able to operate with
+			the component using your mouse and the edit panel.
+		</li>
+		
+		<li>
+			<strong>the edit panel</strong> - the one which allows you to rotate your components clockwise
+			<%= image_tag 'buttons/arrow-circle-225.png' %> and remove the selected component and its
+			connections from the sheet <%= image_tag 'buttons/cross-script.png' %>. You can select one
+			of your components clicking on it with the left mouse button. To deselect component simply
+			click somewhere on the sheet where no component is located.
+		</li>
+		
+		<li>
+			<strong>the run process controls</strong> - buttons, which start the magick are located here!
+			They allow you to run all the scheme at once <%= image_tag 'buttons/arrow-repeat.png' %>, to step your run process
+			one step along (e.g. to invoke the next "wave" of components) <%= image_tag 'buttons/arrow-repeat-once.png' %> or to
+			reset all the scheme <%= image_tag 'buttons/arrow-circle-double.png' %> - to clean the execution component queue and reset each component
+			states.
+		</li>
+	</ul>
+</p>
