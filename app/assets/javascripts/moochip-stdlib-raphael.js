@@ -26,7 +26,7 @@ Resistor = function(name, R) {
 	tmp.pinEntity.push(pinA.entity);
 	tmp.pinEntity.push(pinB.entity);
 	
-	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
+	//tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
 	tmp.updateDragFunctions();
 	
@@ -77,7 +77,7 @@ Diode = function(name) {
 	tmp.pinEntity.push(anode.entity);
 	tmp.pinEntity.push(cathode.entity);
 	
-	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
+	//tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
 	tmp.updateDragFunctions();
 	
@@ -104,11 +104,19 @@ Wire = function(name) {
 	
 	tmp.name = name;
 	
+	tmp.pins.push(new Pin(tmp, 'x'));
+	
 	tmp.entity = MooChip.paper.set();
 	tmp.entity.push(MooChip.paper.circle(50, 25, 15).attr({'fill': MooChip.paper.raphael.color('#4C698A')}));
 	tmp.entity.component = tmp;
 
 	tmp.pinEntity = MooChip.paper.set();
+	
+	var x = tmp.pin('x');
+
+	x.createEntity(50, 25);
+	
+	tmp.pinEntity.push(x.entity);
 		
 	tmp.updateDragFunctions();
 	
@@ -175,7 +183,7 @@ DCSource = function(name, U, I) {
 	tmp.pinEntity.push(pinA.entity);
 	tmp.pinEntity.push(pinB.entity);
 	
-	tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
+	//tmp.pinEntity.mouseover(function(){this.g = this.glow({'color':'#0101DF'});}).mouseout(function(){this.g.remove();});
 	
 	tmp.updateDragFunctions();
 	

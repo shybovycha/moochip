@@ -214,6 +214,8 @@ function Component(type, name)
 		};
 		
 		this.entity.drag(move, start, up);
+		
+		this.pinEntity.mouseover(function(){ this.g = this.glow({'color':'#0101DF'}); }).mouseout(function(){ if (this.g) this.g.remove(); });
 	};
 }
 
@@ -405,6 +407,17 @@ function Scheme() {
 	this.singleStep = function() {
 		var _it = this.queue.shift(), _newIt = [];
 		
+		if (!_it || !_it.length)
+			return;
+			
+		if (!this.src)
+			this.findDCSource();
+		
+		if (!this.src) {
+			console.log('Could not find any DC source. Stopping.');
+			return;
+		}
+		
 		for (var ze = 0; ze < _it.length; ze++) {
 			var p = _it[ze];
 			
@@ -489,7 +502,7 @@ function Scheme() {
 		this.queue = [].concat(this.src.pin('positive').connections);
 		
 		function _itStep() {
-			this.fullCircuitStep();
+			MooChip.scheme.fullCircuitStep();
 			
 			if (!MooChip.stopRunning)
 				setTimeout(_itStep, 50);
