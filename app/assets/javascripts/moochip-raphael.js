@@ -444,7 +444,7 @@ function Scheme() {
 		
 		for (var i = 0; i < _newIt.length; i++) {
 			for (var t = 0; t < _newIt.length; t++) {
-				if (_newIt[i] == _newIt[t]) {
+				if (_newIt[i] == _newIt[t] && i != t) {
 					_newIt = _newIt.slice(0, t).concat(_newIt.slice(t + 1));
 				}
 			}
