@@ -1,16 +1,16 @@
 <div class="scheme-container">
 	<div class="scheme-top-menu">
-		<a href="#" onclick="add('resistor')" title="create a new resistor">resistor</a>
-		<a href="#" onclick="add('diode')" title="create a new diode">diode</a>
-		<a href="#" onclick="add('dc_source')" title="create a new DC source">DC source</a>
-		<a href="#" onclick="add('wire')" title="create a new wire">wire</a>
+		<a href="#" onclick="add('resistor')" title="create a new resistor"><%= image_tag 'components/resistor.png' %></a>
+		<a href="#" onclick="add('diode')" title="create a new diode"><%= image_tag 'components/diode.png' %></a>
+		<a href="#" onclick="add('dc_source')" title="create a new DC source"><%= image_tag 'components/dc_source.png' %></a>
+		<a href="#" onclick="add('wire')" title="create a new wire"><%= image_tag 'components/wire.png' %></a>
 		&nbsp;|&nbsp;
-		<a href="#" onclick="rotate_selected()" title="rotate selected component 90&deg; clockwise">rotate</a>
-		<a href="#" onclick="remove_selected()" title="remove selected component">remove</a>
+		<a href="#" onclick="rotate_selected()" title="rotate selected component 90&deg; clockwise"><%= image_tag 'buttons/arrow-circle-225.png' %></a>
+		<a href="#" onclick="remove_selected()" title="remove selected component"><%= image_tag 'buttons/cross-script.png' %></a>
 		&nbsp;|&nbsp;
-		<a href="#" onclick="reset_scheme()" title="stop any executions and reset components' states">reset</a>
-		<a href="#" onclick="simple_step()" title="step execution one component along">simple step</a>
-		<a href="#" onclick="full_step()" title="step execution all components at once">full step</a>
+		<a href="#" onclick="reset_scheme()" title="stop any executions and reset components' states"><%= image_tag 'buttons/arrow-circle-double.png' %></a>
+		<a href="#" onclick="simple_step()" title="step execution one component along"><%= image_tag 'buttons/arrow-repeat-once.png' %></a>
+		<a href="#" onclick="full_step()" title="step execution all components at once"><%= image_tag 'buttons/arrow-repeat.png' %></a>
 	</div>
 
 	<div id="scheme-holder"></div>

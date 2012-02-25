@@ -1,6 +1,6 @@
 Moochip::Application.routes.draw do
   match 'developers' => 'home#developers'
-  match 'demo-raphael' => 'home#demo-raphael'
+  match 'demo-raphael' => 'home#demo_raphael'
   
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -51,7 +51,7 @@ Moochip::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => 'home#demo_raphael'
+  root :to => 'home#index'
 
   # See how all your routes lay out with "rake routes"
 
