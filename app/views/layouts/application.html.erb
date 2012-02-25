@@ -21,6 +21,8 @@
 		<% end %>
 		
 		<%= csrf_meta_tags %>
+		
+		<title><%= (!@title.nil? and !@title.empty?) ? @title : "moochip" %></title>
 	</head>
 
 	<body>

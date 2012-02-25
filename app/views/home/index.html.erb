@@ -55,4 +55,140 @@
 			states.
 		</li>
 	</ul>
+	
+	<br />
+	
+	<em>Now let's try to do something... Errr... How?</em> There are no tricks. User Interface (aka <em>UI</em>)
+	is aimed to be as easy and user-friendly as possible. So, here's the list on how things are done:
+	
+	<table>
+		<tr>
+			<td>
+				<strong>You want to...</strong>
+			</td>
+			
+			<td>
+				<strong>Follow these:</strong>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Add a component to the sheet
+			</td>
+			
+			<td>
+				Click on the component's icon
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Drag the component over the sheet
+			</td>
+			
+			<td>
+				Press your left mouse button over the component. <strong>Do not unpress it yet!</strong>
+				Move it with the component selected to the place you want. And now, unpress the left
+				mouse button.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Select the component
+			</td>
+			
+			<td>
+				Click left mouse button over the component on the sheet.
+				When the dashed rectangle appears around the component - it is selected.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Rotate the component
+			</td>
+			
+			<td>
+				Select the component and click the rotate button <%= image_tag 'buttons/arrow-circle-225.png' %> 
+				in the toolbar above the sheet.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Connect two components
+			</td>
+			
+			<td>
+				Move your mouse to the pin you want to connect with. The pin is a medium red circle
+				near the component's symbol. When you've stopped your mouse cursor over the pin, the blue
+				circle will appear around that pin showing that you selected that pin <br />
+				<%= image_tag 'screens/pin-hover.jpg' %>
+				<br />
+				Now, press your left mouse button keeping mouse cursor over the pin, 
+				<strong>do not unpress it yet</strong> and move a bit away from the pin - the blue line
+				will appear coming out of the selected pin and showing that you are trying to connect
+				that pin to some other pin<br />
+				<%= image_tag 'screens/pin-drag.jpg' %>
+				<br />
+				Move the cursor, <strong>keeping your left mouse button down</strong> to the pin
+				you want connect to until the blue circle appears around that other pin. Only then
+				you can release your left mouse button.<br />
+				<%= image_tag 'screens/pin-connect.jpg' %>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Remove component and its connections
+			</td>
+			
+			<td>
+				Select the component and click the remove button  <%= image_tag 'buttons/cross-script.png' %>
+				in the toolbar.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Run the simulation
+			</td>
+			
+			<td>
+				Connect <strong>DC Source</strong> component to the other components of your sheet
+				and click the run the full circuit simulation button <%= image_tag 'buttons/arrow-repeat.png' %>
+				in the toolbar. Components which were invoked in the simulation will be highlighted with
+				light-blue color
+				<br />
+				<%= image_tag 'screens/full-circuit-step.jpg' %>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Step the simulation by one iteration
+			</td>
+			
+			<td>
+				Click the step simulation button <%= image_tag 'buttons/arrow-repeat-once.png' %> in the toolbar
+				<br />
+				<%= image_tag 'screens/simple-step.jpg' %>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Reset simulations
+			</td>
+			
+			<td>
+				Click the reset execution button <%= image_tag 'buttons/arrow-circle-double.png' %> in the 
+				toolbar. Any invoked component will become uninvoked.
+				<br />
+				<%= image_tag 'screens/circuit-reset.jpg' %>
+			</td>
+		</tr>
+	</table>
 </p>
