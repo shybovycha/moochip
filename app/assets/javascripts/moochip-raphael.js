@@ -471,7 +471,9 @@ function Scheme() {
 			this.queue[i].u = this.src.pin('positive').u;
 		}*/
 		
-		this.queue = [ [ this.src.pin('negative') ] ];
+		var negativeSrcPin = this.src.pin('negative');
+		
+		this.queue = [ [ negativeSrcPin ] ];
 		
 		while (this.queue.length > 0) {
 			if (stopFlag >= controlFlag) {
@@ -481,7 +483,7 @@ function Scheme() {
 			}
 			
 			for (var i = 0; i < this.queue.length; i++) {
-				if (this.queue[i] == this.src.pin('negative'))
+				if (this.queue[i] == negativeSrcPin)
 					stopFlag++;
 			}
 			
