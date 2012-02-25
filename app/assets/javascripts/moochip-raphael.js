@@ -237,11 +237,6 @@ function Scheme() {
 		for (var i = 0; i < components.length; i++) {
 			for (var t = 0; t < components[i].entity.length; t++) {
 				if (components[i].entity[t] == entity) {
-					/*if (MooChip.scheme.selectedComponent && components[i] != MooChip.scheme.selectedComponent && MooChip.scheme.selectedComponent.entity.selectionRect) {
-						MooChip.scheme.selectedComponent.entity.selectionRect.remove();
-						MooChip.scheme.selectedComponent.entity.selectionRect = null;
-					}*/
-						
 					MooChip.scheme.selectedComponent = components[i];
 					
 					var _bb = MooChip.scheme.selectedComponent.entity.getBBox();
@@ -408,27 +403,41 @@ function Scheme() {
 	}
 	
 	this.singleStep = function() {
-		var p = this.queue.shift();
+		var _it = this.queue.shift(), _newIt = [];
 		
-		for (var i = 0; i < p.component.pins.length; i++) {
-			var p2 = p.component.pins[i];
+		for (var ze = 0; ze < _it.length; ze++) {
+			var p = _it[ze];
 			
-			if (this.isSrcNegativeReachable(p2, this.src))
-				p2.src = 'negative';
+			for (var i = 0; i < p.component.pins.length; i++) {
+				var p2 = p.component.pins[i];
+				
+				if (this.isSrcNegativeReachable(p2, this.src))
+					p2.src = 'negative';
+			}
+			
+			p.component.invoke(p, p.i, p.u);
+			
+			for (var i = 0; i < p.component.pins.length; i++) {
+				var p2 = p.component.pins[i];
+				
+				if (p2.u && p2.i)
+					for (var t = 0; t < p2.connections.length; t++) {
+						p2.connections[t].i = p2.i;
+						p2.connections[t].u = p2.u;
+						_newIt.push(p2.connections[t]);
+					}
+			}
 		}
 		
-		p.component.invoke(p, p.i, p.u);
-		
-		for (var i = 0; i < p.component.pins.length; i++) {
-			var p2 = p.component.pins[i];
-			
-			if (p2.u && p2.i)
-				for (var t = 0; t < p2.connections.length; t++) {
-					p2.connections[t].i = p2.i;
-					p2.connections[t].u = p2.u;
-					this.queue.push(p2.connections[t]);
+		for (var i = 0; i < _newIt.length; i++) {
+			for (var t = 0; t < _newIt.length; t++) {
+				if (_newIt[i] == _newIt[t]) {
+					_newIt = _newIt.slice(0, t).concat(_newIt.slice(t + 1));
 				}
+			}
 		}
+		
+		this.queue.push(_newIt);
 	}
 	
 	this.fullCircuitStep = function() {
@@ -441,13 +450,15 @@ function Scheme() {
 		
 		var stopFlag = 0, controlFlag = this.src.pin('negative').connections.length;
 		
-		this.src.invoke(this.src.pin('negative'));
+		/*this.src.invoke(this.src.pin('negative'));
 		this.queue = this.queue.concat(this.src.pin('positive').connections);
 		
 		for (var i = 0; i < this.queue.length; i++) {
 			this.queue[i].i = this.src.pin('positive').i;
 			this.queue[i].u = this.src.pin('positive').u;
-		}
+		}*/
+		
+		this.queue = [ [ this.src.pin('negative') ] ];
 		
 		while (this.queue.length > 0) {
 			if (stopFlag >= controlFlag) {
@@ -465,7 +476,9 @@ function Scheme() {
 		}
 	}
 	
-	this.run = function(steps) {
+	MooChip.stopRunning = false;
+	
+	this.run = function() {
 		this.findDCSource();
 		
 		if (!this.src) {
@@ -473,13 +486,15 @@ function Scheme() {
 			return;
 		}
 		
-		if (!steps)
-			steps = -1;
-		
 		this.queue = [].concat(this.src.pin('positive').connections);
 		
-		for (var i = 0; i != steps; i++) {
+		function _itStep() {
 			this.fullCircuitStep();
+			
+			if (!MooChip.stopRunning)
+				setTimeout(_itStep, 50);
 		}
+		
+		_itStep();
 	};
 }
