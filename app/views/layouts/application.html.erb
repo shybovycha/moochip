@@ -20,11 +20,11 @@
 			<%= javascript_include_tag 'moochip-raphael.js' %>
 			<%= javascript_include_tag 'moochip-stdlib-raphael.js' %>
 			<%= javascript_include_tag 'demo-raphael.js' %>
+		<% else %>
+			<title><%= (!@title.nil? and !@title.empty?) ? @title : "moochip" %></title>
 		<% end %>
 		
 		<%= csrf_meta_tags %>
-		
-		<title><%= (!@title.nil? and !@title.empty?) ? @title : "moochip" %></title>
 	</head>
 
 	<body>
