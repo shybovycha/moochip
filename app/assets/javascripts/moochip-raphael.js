@@ -446,11 +446,6 @@ function Scheme() {
 	}
 	
 	this.singleStep = function() {
-		var _it = this.queue.shift(), _newIt = [];
-		
-		if (!_it || !_it.length)
-			return;
-			
 		if (!this.src)
 			this.findDCSource();
 		
@@ -459,6 +454,26 @@ function Scheme() {
 			// opera.postError('Could not find any DC source. Stopping.');
 			return;
 		}
+		
+		if (!this.queue || !this.queue.length) {
+			var _tmp = [];
+			
+			this.src.invoke(this.src.pin('negative'));
+			
+			_tmp = (this.src.pin('positive').connections);
+			
+			for (var i = 0; i < _tmp.length; i++) {
+				_tmp[i].i = this.src.pin('positive').i;
+				_tmp[i].u = this.src.pin('positive').u;
+			}
+			
+			this.queue = [ _tmp ];
+		}
+		
+		var _it = this.queue.shift(), _newIt = [];
+		
+		if (!_it || !_it.length)
+			return;
 		
 		for (var ze = 0; ze < _it.length; ze++) {
 			var p = _it[ze];
