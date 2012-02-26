@@ -38,12 +38,12 @@ body {
 }
 
 .navigation-menu a {
-	text-decoration: underlined;
+	text-decoration: underline;
 	color: #06003A;
 }
 
 .navigation-menu a:hover {
-	text-decoration: underlined;
+	text-decoration: underline;
 	color: #585197;
 }
 
