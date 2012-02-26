@@ -101,6 +101,7 @@ function Pin(component, name)
 			MooChip.scheme.connectionLines.push(line);
 		} else {
 			console.log('Could not connect', [this, pin], 'because of', line);
+			// opera.postError('Could not connect', [this, pin], 'because of', line);
 		}
 
 		return this;
@@ -137,7 +138,8 @@ function Pin(component, name)
 		},
 		
 		end = function(evt) {
-			var _components = MooChip.scheme.components, target = false, x1 = evt.layerX, y1 = evt.layerY;
+			MooChip.paper.renderfix();
+			var _components = MooChip.scheme.components, target = false, x1 = evt.layerX | evt.clientX, y1 = evt.layerY | evt.clientY;
 			
 			// check if selected component is a wire
 			
@@ -229,11 +231,12 @@ function Component(type, name)
 		
 		up = function() {
 			console.log(name, ' dropped!');
+			// opera.postError(name, ' dropped!');
 		};
 		
 		this.entity.drag(move, start, up);
 		
-		this.pinEntity.mouseover(function(){ this.g = this.glow({'color':'#0101DF'}); }).mouseout(function(){ if (this.g) this.g.remove(); });
+		this.pinEntity.mouseover(function(){ if (!this.g) this.g = this.glow({'color':'#0101DF'}); }).mouseout(function(){ if (this.g) { this.g.remove(); this.g = null; } });
 	};
 }
 
@@ -453,6 +456,7 @@ function Scheme() {
 		
 		if (!this.src) {
 			console.log('Could not find any DC source. Stopping.');
+			// opera.postError('Could not find any DC source. Stopping.');
 			return;
 		}
 		
@@ -461,6 +465,7 @@ function Scheme() {
 			
 			if (!p || !p.component) {
 				console.log('Pin is invalid', p);
+				// opera.postError('Pin is invalid', p);
 				continue;
 			}
 			
@@ -501,6 +506,7 @@ function Scheme() {
 		
 		if (!this.src) {
 			console.log('Could not find any DC source. Stopping.');
+			// opera.postError('Could not find any DC source. Stopping.');
 			return;
 		}
 		

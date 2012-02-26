@@ -4,12 +4,20 @@
         <meta charset="utf-8" />
         <title>moochip raphael demo</title>
         
+		<script type="text/javascript" src="browser-detect.js"></script>
         <script type="text/javascript" src="raphael.js"></script>
         <script type="text/javascript" src="moochip-raphael.js"></script>
         <script type="text/javascript" src="moochip-stdlib-raphael.js"></script>
 				
 		<script type="text/javascript">
 		window.onload = function () {
+			var browser = BrowserDetect.browser;
+			
+			if (browser == 'Explorer' || browser == 'Opera') {
+				alert('Your browser is not supported yet!');
+				return;
+			}
+			
 			var R = Raphael('holder');
 			
 			MooChip.paper = R;

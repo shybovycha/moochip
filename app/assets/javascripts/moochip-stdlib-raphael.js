@@ -34,6 +34,7 @@ Resistor = function(name, R) {
 			this.pin('b').u = U;
 			
 			console.log(this.name, '!');
+			// opera.postError(this.name, '!');
 			
 			this.entity.glow({'color': MooChip.invokeGlowColor})
 		} else
@@ -42,6 +43,7 @@ Resistor = function(name, R) {
 			this.pin('a').u = U;
 			
 			console.log(this.name, '!');
+			// opera.postError(this.name, '!');
 			
 			this.entity.glow({'color': MooChip.invokeGlowColor})
 		}
@@ -91,6 +93,7 @@ Diode = function(name) {
 			this.pin('cathode').u = U;
 			
 			console.log(this.name, '!');
+			// opera.postError(this.name, '!');
 			
 			this.entity.glow({'color': MooChip.invokeGlowColor})
 		}
@@ -201,6 +204,7 @@ DCSource = function(name, U, I) {
 			this.pin('positive').u = this.U;
 			
 			console.log(this.name, '!');
+			// opera.postError(this.name, '!');
 		}
 	};
 	
