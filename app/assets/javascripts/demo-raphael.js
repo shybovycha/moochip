@@ -1,7 +1,7 @@
 window.onload = function () {
 	var browser = BrowserDetect.browser;
 	
-	if (browser == 'Explorer')
+	if (browser == 'Explorer' || browser == 'Opera')
 		return;
 		
 	var R = Raphael('scheme-holder');
