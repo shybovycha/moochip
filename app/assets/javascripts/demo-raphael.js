@@ -3,7 +3,18 @@ window.onload = function () {
 	
 	MooChip.paper = R;
 	MooChip.scheme = new Scheme();
+	MooChip.updatePinMeter = update_pin_meter;
 };
+
+function update_pin_meter(i, u) {
+	if (i)
+		document.getElementById('current-i').innerHTML = i; else
+			document.getElementById('current-i').innerHTML = 'unknown';
+			
+	if (u)
+		document.getElementById('current-u').innerHTML = u; else
+			document.getElementById('current-u').innerHTML = 'unknown';
+}
 
 function add(type) {
 	var generateName = function(type) {

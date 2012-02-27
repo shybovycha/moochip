@@ -5,6 +5,7 @@ MooChip.scheme = null;
 MooChip.stopRunning = false;
 MooChip.gridSize = 25;
 MooChip.invokeGlowColor = '#3AF7EE';
+MooChip.updatePinMeter = null;
 
 MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -235,7 +236,7 @@ function Component(type, name)
 		
 		this.entity.drag(move, start, up);
 		
-		this.pinEntity.mouseover(function(){ if (!this.g) this.g = this.glow({'color':'#0101DF'}); }).mouseout(function(){ if (this.g) { this.g.remove(); this.g = null; } });
+		this.pinEntity.mouseover(function(){ if (MooChip.updatePinMeter) MooChip.updatePinMeter(this.pin.i, this.pin.u); if (!this.g) this.g = this.glow({'color':'#0101DF'}); }).mouseout(function(){ if (MooChip.updatePinMeter) MooChip.updatePinMeter(this.pin.i, this.pin.u); if (this.g) { this.g.remove(); this.g = null; } });
 	};
 }
 
