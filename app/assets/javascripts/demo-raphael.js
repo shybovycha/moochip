@@ -1,4 +1,9 @@
 window.onload = function () {
+	var browser = BrowserDetect.browser;
+	
+	if (browser == 'Explorer')
+		return;
+		
 	var R = Raphael('scheme-holder');
 	
 	MooChip.paper = R;

@@ -140,7 +140,11 @@ function Pin(component, name)
 		},
 		
 		end = function(evt) {
-			var _components = MooChip.scheme.components, target = false, x1 = evt.layerX, y1 = evt.layerY;
+			var _components = MooChip.scheme.components, target = false;
+			var _container = MooChip.paper.canvas.parentElement;
+			var x1 = evt.layerX || (evt.pageX - _container.offsetLeft), y1 = evt.layerY || (evt.pageY - _container.offsetTop);
+			
+			console.log(x1, y1);
 			
 			// check if selected component is a wire
 			
