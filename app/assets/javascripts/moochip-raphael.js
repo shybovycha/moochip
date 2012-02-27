@@ -236,7 +236,7 @@ function Component(type, name)
 		
 		this.entity.drag(move, start, up);
 		
-		this.pinEntity.mouseover(function(){ if (MooChip.updatePinMeter) MooChip.updatePinMeter(this.pin.i, this.pin.u); if (!this.g) this.g = this.glow({'color':'#0101DF'}); }).mouseout(function(){ if (MooChip.updatePinMeter) MooChip.updatePinMeter(this.pin.i, this.pin.u); if (this.g) { this.g.remove(); this.g = null; } });
+		this.pinEntity.mouseover(function(){ if (MooChip.updatePinMeter) MooChip.updatePinMeter(this.pin.i, this.pin.u); if (!this.g) this.g = this.glow({'color':'#0101DF'}); }).mouseout(function(){ if (MooChip.updatePinMeter) MooChip.updatePinMeter(); if (this.g) { this.g.remove(); this.g = null; } });
 	};
 }
 
