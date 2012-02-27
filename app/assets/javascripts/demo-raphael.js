@@ -1,4 +1,11 @@
 window.onload = function () {
+	var browser = BrowserDetect.browser;
+	
+	if (browser == 'Explorer') {
+		alert('Your browser is not supported yet.');
+		return;
+	}
+		
 	var R = Raphael('scheme-holder');
 	
 	MooChip.paper = R;
@@ -9,11 +16,11 @@ window.onload = function () {
 function update_pin_meter(i, u) {
 	if (i)
 		document.getElementById('current-i').innerHTML = i + 'A'; else
-			document.getElementById('current-i').innerHTML = 'unknown';
+			document.getElementById('current-i').innerHTML = '&oslash;';
 			
 	if (u)
 		document.getElementById('current-u').innerHTML = u + 'V'; else
-			document.getElementById('current-u').innerHTML = 'unknown';
+			document.getElementById('current-u').innerHTML = '&oslash;';
 }
 
 function add(type) {

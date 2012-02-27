@@ -73,7 +73,7 @@ body {
 	background-color: #FCEDB4;
 }
 
-.scheme-top-menu a img {
+.scheme-top-menu a img, em {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	vertical-align: middle;
