@@ -144,8 +144,6 @@ function Pin(component, name)
 			var _container = MooChip.paper.canvas.parentElement;
 			var x1 = evt.layerX || (evt.pageX - _container.offsetLeft), y1 = evt.layerY || (evt.pageY - _container.offsetTop);
 			
-			console.log(x1, y1);
-			
 			// check if selected component is a wire
 			
 			for (var i = 0; i < _components.length; i++) {
