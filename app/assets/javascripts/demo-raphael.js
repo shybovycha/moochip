@@ -7,7 +7,8 @@ window.onload = function () {
 
 function add(type) {
 	var generateName = function(type) {
-		var prefixes = { 'resistor': 'r', 'diode': 'vd', 'wire': '-', 'dc_source': 'src'}, components = MooChip.scheme.components, cnt = 1;
+		var prefixes = { 'resistor': 'r', 'diode': 'vd', 'wire': '-', 'dc_source': 'src', 'pnp_transistor': 'vt', 'npn_transistor': 'vt'}, 
+			components = MooChip.scheme.components, cnt = 1;
 		
 		for (var i = 0; i < components.length; i++) {
 			if (components[i].type == type) {
@@ -24,6 +25,14 @@ function add(type) {
 	} else
 	if (type == 'diode') {
 		var a = new Diode(generateName(type));
+		MooChip.scheme.add(a);
+	} else
+	if (type == 'pnp_transistor') {
+		var a = new PNPTransistor(generateName(type));
+		MooChip.scheme.add(a);
+	} else
+	if (type == 'npn_transistor') {
+		var a = new NPNTransistor(generateName(type));
 		MooChip.scheme.add(a);
 	} else
 	if (type == 'dc_source') {
