@@ -98,6 +98,7 @@ function Pin(component, name)
 			
 			line.pinA = this.entity; 
 			line.pinB = pin.entity;
+			line.toBack();
 			
 			MooChip.scheme.connectionLines.push(line);
 		} else {
@@ -219,13 +220,19 @@ function Component(type, name)
 		},
 		
 		move = function(dx, dy) {
-			var bb = entity.getBBox(), bb2 = pinEntity.getBBox();
-			entity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
-			pinEntity.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
+			var bb = entity.getBBox(), bb2 = pinEntity.getBBox(), transformStr = 't' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...';
+			
+			entity.transform(transformStr);
+			pinEntity.transform(transformStr);
 			
 			if (entity.selectionRect)
-				entity.selectionRect.transform('t' + (entity.oBB.x - bb.x + dx) + ',' + (entity.oBB.y - bb.y + dy) + '...');
+				entity.selectionRect.transform(transformStr);
 				
+			entity.forEach(function(e) {
+				if (e.glowEntity)
+					e.glowEntity.transform(transformStr);
+			});
+
 			MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
@@ -265,6 +272,7 @@ function Scheme() {
 					var _bb = MooChip.scheme.selectedComponent.entity.getBBox();
 					MooChip.scheme.selectedComponent.entity.selectionRect = MooChip.paper.set();
 					MooChip.scheme.selectedComponent.entity.selectionRect.push(MooChip.paper.rect(_bb.x, _bb.y, _bb.width, _bb.height).attr({fill: "none", stroke: "#666", "stroke-dasharray": "- "}));
+					MooChip.scheme.selectedComponent.entity.selectionRect.toBack();
 					
 					return;
 				}
@@ -309,6 +317,7 @@ function Scheme() {
 				var line = lines[t], p1 = line.pinA.getPos(), p2 = line.pinB.getPos();
 				
 				line.attr({'path': 'M' + p1.x + ',' + p1.y + 'L' + p2.x + ',' + p2.y});
+				line.toBack();
 			}
 		}
 	}
