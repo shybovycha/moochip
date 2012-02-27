@@ -125,6 +125,8 @@ function Pin(component, name)
 			var ox = this.connectionLine.ox, oy = this.connectionLine.oy;
 			
 			this.connectionLine.attr({'path': 'M' + ox + ',' + oy + 'L' + (ox + dx) + ',' + (oy + dy)});
+			this.connectionLine.x = ox + dx;
+			this.connectionLine.y = oy + dy;
 		}, 
 		
 		start = function(_x, _y, evt) {
@@ -136,42 +138,34 @@ function Pin(component, name)
 					
 			this.connectionLine.ox = x;
 			this.connectionLine.oy = y;
+			this.connectionTarget = null;
 		},
 		
 		end = function(evt) {
-			var _components = MooChip.scheme.components, target = false, x1 = evt.layerX, y1 = evt.layerY;
-			
-			// check if selected component is a wire
-			
-			for (var i = 0; i < _components.length; i++) {
-				var _pins = _components[i].pins;
+			if (this.connectionTarget && this.connectionLine) {
+				var _p1 = this.connectionTarget.entity.getPos(), d = MooChip.distance(_p1.x, _p1.y, this.connectionLine.x, this.connectionLine.y);
 				
-				for (var t = 0; t < _pins.length; t++) {
-					if (!_pins[t].entity || _pins[t].entity == entity) {
-						continue;
-					}
-					
-					var _p = _pins[t].entity.getPos(), x2 = _p.x, y2 = _p.y, d = MooChip.distance(x1, y1, x2, y2);
-
-					if (d < 15) {
-						target = _pins[t];
-						break;
-					}
+				if (d < 15) {
+					this.connectionTarget.connect(this.pin);
 				}
-				
-				if (target)
-					break;
 			}
 			
-			this.connectionLine.remove();
-			this.connectionLine = null;
-			
-			if (target) {
-				target.connect(this.pin);
+			if (this.connectionLine) {
+				this.connectionLine.remove();
+				this.connectionLine = null;
 			}
+		},
+		
+		dragOver = function(otherEntity) {
+			if (!otherEntity.pin || !otherEntity.pin.component) {
+				return;
+			}
+			
+			this.connectionTarget = otherEntity.pin;
 		};
 		
 		this.entity.drag(move, start, end);
+		this.entity.onDragOver(dragOver);
 	};
 }
 
