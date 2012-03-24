@@ -1,0 +1,203 @@
+<h2>Let me introduce you...</h2>
+<p>
+	<em>What in the world is this?</em> - you'll probably ask when you first visit this website.<br />
+	This is going to become an interactive electronics tutorial. If i will finish it, of course.<br />
+
+	<br />
+
+	<em>Interactive electronics tutorial? What's that?</em> See, when you do want to learn something,
+	it's always better to see it in action than just read tons of text 'bout it. The same is true fofr electronics.
+	It's really hard to understand the difference between <em>p-n-p</em> an <em>n-p-n</em> transistors when you
+	did not even seen them before! For example, i did not understand that difference until i started this project 
+	<%= image_tag 'smilies/smiley-razz.png' %><br />
+
+	<br />
+
+	<em>p-n-p? Transistor? Too many difficult words!</em> Just click in the menu "Let's start" above and dive
+	into the world of electronics!
+</p>
+
+<h2>Oh, there's something missing...</h2>
+<p>
+	Yeah, this project is in an early development yet. I even do not know if i will be able to finish it!
+	Still, this is only my coursework. A very, very pretty coursework <%= image_tag 'smilies/smiley-lol.png' %>
+	So, don't  be upset! If i'll find the reason to add something to this project - i'll surely do it!
+	Have fun! <%= image_tag 'smilies/smiley-wink.png' %>
+</p>
+
+
+<h2>What's gonna be clicked next?</h2>
+<p>
+	<em>Well, i see some strange pictures and light rectangle. So, what's next?</em> That rectangle is a 
+	<em>scheme sheet</em>. It is the right place to create a schemes - a set of connected symbols,
+	intertwined into a diabolic picture called <em>(electronic) circuit</em>. It shows the heretics
+	called "engineers", which part should be connected to which parts and how the device will work at all.<br />
+
+	<br />
+
+	The rectangle with odd pictures above the sheet is the <em>toolbar</em>. It will become your mostly used
+	part of the site (taking into account the fact you want to <strong>experiment</strong> mostly).
+	It is divided into three parts:
+	
+	<ul>
+		<li>
+			<strong>the component container</strong> - the place, where all the components the system knows
+			are located. They are represented by their <em>symbols</em> - that strange pictures
+			as rectangles, triangles, circles and lines. Click on one of them and it will appear
+			in the <em>top-left</em> corner of your sheet. Then you'll be able to operate with
+			the component using your mouse and the edit panel.
+		</li>
+		
+		<li>
+			<strong>the edit panel</strong> - the one which allows you to rotate your components clockwise
+			<%= image_tag 'buttons/arrow-circle-225.png' %> and remove the selected component and its
+			connections from the sheet <%= image_tag 'buttons/cross-script.png' %>. You can select one
+			of your components clicking on it with the left mouse button. To deselect component simply
+			click somewhere on the sheet where no component is located.
+		</li>
+		
+		<li>
+			<strong>the run process controls</strong> - buttons, which start the magick are located here!
+			They allow you to run all the scheme at once <%= image_tag 'buttons/arrow-repeat.png' %>, to step your run process
+			one step along (e.g. to invoke the next "wave" of components) <%= image_tag 'buttons/arrow-repeat-once.png' %> or to
+			reset all the scheme <%= image_tag 'buttons/arrow-circle-double.png' %> - to clean the execution component queue and reset each component
+			states.
+		</li>
+	</ul>
+	
+	<br />
+	
+	<em>Now let's try to do something... Errr... How?</em> There are no tricks. User Interface (aka <em>UI</em>)
+	is aimed to be as easy and user-friendly as possible. So, here's the list on how things are done:
+	
+	<table>
+		<tr>
+			<td>
+				<strong>You want to...</strong>
+			</td>
+			
+			<td>
+				<strong>Follow these:</strong>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Add a component to the sheet
+			</td>
+			
+			<td>
+				Click on the component's icon
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Drag the component over the sheet
+			</td>
+			
+			<td>
+				Press your left mouse button over the component. <strong>Do not unpress it yet!</strong>
+				Move it with the component selected to the place you want. And now, unpress the left
+				mouse button.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Select the component
+			</td>
+			
+			<td>
+				Click left mouse button over the component on the sheet.
+				When the dashed rectangle appears around the component - it is selected.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Rotate the component
+			</td>
+			
+			<td>
+				Select the component and click the rotate button <%= image_tag 'buttons/arrow-circle-225.png' %> 
+				in the toolbar above the sheet.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Connect two components
+			</td>
+			
+			<td>
+				Move your mouse to the pin you want to connect with. The pin is a medium red circle
+				near the component's symbol. When you've stopped your mouse cursor over the pin, the blue
+				circle will appear around that pin showing that you selected that pin <br />
+				<%= image_tag 'screens/pin-hover.jpg' %>
+				<br />
+				Now, press your left mouse button keeping mouse cursor over the pin, 
+				<strong>do not unpress it yet</strong> and move a bit away from the pin - the blue line
+				will appear coming out of the selected pin and showing that you are trying to connect
+				that pin to some other pin<br />
+				<%= image_tag 'screens/pin-drag.jpg' %>
+				<br />
+				Move the cursor, <strong>keeping your left mouse button down</strong> to the pin
+				you want connect to until the blue circle appears around that other pin. Only then
+				you can release your left mouse button.<br />
+				<%= image_tag 'screens/pin-connect.jpg' %>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Remove component and its connections
+			</td>
+			
+			<td>
+				Select the component and click the remove button  <%= image_tag 'buttons/cross-script.png' %>
+				in the toolbar.
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Run the simulation
+			</td>
+			
+			<td>
+				Connect <strong>DC Source</strong> component to the other components of your sheet
+				and click the run the full circuit simulation button <%= image_tag 'buttons/arrow-repeat.png' %>
+				in the toolbar. Components which were invoked in the simulation will be highlighted with
+				light-blue color
+				<br />
+				<%= image_tag 'screens/full-circuit-step.jpg' %>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Step the simulation by one iteration
+			</td>
+			
+			<td>
+				Click the step simulation button <%= image_tag 'buttons/arrow-repeat-once.png' %> in the toolbar
+				<br />
+				<%= image_tag 'screens/simple-step.jpg' %>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				Reset simulations
+			</td>
+			
+			<td>
+				Click the reset execution button <%= image_tag 'buttons/arrow-circle-double.png' %> in the 
+				toolbar. Any invoked component will become uninvoked.
+				<br />
+				<%= image_tag 'screens/circuit-reset.jpg' %>
+			</td>
+		</tr>
+	</table>
+</p>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+
+		<%= stylesheet_link_tag    "application", :media => "all" %>
+		
+		<%= javascript_include_tag 'browser-detect.js' %>
+		
+		<% if (@demo == 'console') then %>
+			<title>Moochip - Console Demo</title>
+			
+			<%= javascript_include_tag 'moochip.js' %>
+			<%= javascript_include_tag 'moochip-stdlib.js' %>
+			<%= javascript_include_tag 'demo-console.js' %>
+		<% elsif (@demo) then %>
+			<title>Moochip - Raphael Demo</title>
+			
+			<%= javascript_include_tag 'raphael.js' %>
+			<%= javascript_include_tag 'moochip-raphael.js' %>
+			<%= javascript_include_tag 'moochip-stdlib-raphael.js' %>
+			<%= javascript_include_tag 'demo-raphael.js' %>
+		<% else %>
+			<title><%= (!@title.nil? and !@title.empty?) ? @title : "moochip" %></title>
+		<% end %>
+		
+		<%= csrf_meta_tags %>
+	</head>
+
+	<body>
+		<div class="navigation-menu">
+			<ul>
+				<li><a href="/">About</a></li>
+				<li><a href="/demo-raphael">Let's start!</a></li>
+				<li><a href="/developers">Developers</a></li>
+			</ul>
+		</div>
+		
+		<%= yield %>
+		
+		<!-- GoStats JavaScript Based Code -->
+			<script type="text/javascript" src="http://gostats.com/js/counter.js"></script>
+			<script type="text/javascript">_gos='c4.gostats.com';_goa=371855;
+			_got=5;_goi=1;_gol='web stats hits';_GoStatsRun();</script>
+			<noscript><a target="_blank" title="web stats hits" 
+			href="http://gostats.com"><img alt="web stats hits" 
+			src="http://c4.gostats.com/bin/count/a_371855/t_5/i_1/counter.png" 
+			style="border-width:0" /></a></noscript>
+		<!-- End GoStats JavaScript Based Code -->
+
+	</body>
+</html>

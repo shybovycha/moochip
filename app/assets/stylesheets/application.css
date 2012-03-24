@@ -1,0 +1,98 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+*/
+
+body {
+	background-color: #F4C481;
+}
+
+.navigation-menu {
+	font-family: Helvetica;
+	font-size: 22pt;
+	background-color: #E49629;
+	margin-top: 20px;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.navigation-menu ul {
+	list-style: none;
+	display: inline;
+}
+
+.navigation-menu ul li {
+	display: inline;
+	padding: 0 10px 0 10px;
+	margin-left: 25px;
+	margin-right: 25px;
+}
+
+.navigation-menu a {
+	text-decoration: underline;
+	color: #06003A;
+}
+
+.navigation-menu a:hover {
+	text-decoration: underline;
+	color: #585197;
+}
+
+.scheme-top-menu {
+	border: 1px solid #FFFFFF;
+	margin-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: left;
+}
+
+.scheme-container {
+	width: 65%;
+	height: 500px;
+	float: left;
+	
+	/*max-width: 500px;
+	max-height: 500px;*/
+	
+	min-height: 500px;
+	min-width: 500px;
+}
+
+#scheme-holder {
+	width: 100%;
+	height: 500px;
+	background-color: #FCEDB4;
+}
+
+.scheme-top-menu a img, em {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	vertical-align: middle;
+}
+
+.top-menu-panel {
+	display: inline;
+	border-left: 1px dotted black;
+	border-right: 1px dotted black;
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 0px 10px 0px 10px;
+}
+
+.help-container {
+	float: right;
+	width: 30%;
+}
+
+.search-bar {
+	margin-bottom: 10px;
+}
