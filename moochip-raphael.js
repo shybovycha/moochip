@@ -48,6 +48,15 @@ Raphael.el.getPos = function() {
 	return { 'x': x, 'y': y };
 };
 
+/*
+    $('#container').mousemove(function(evt) {
+        var x = evt.pageX - $('#container').offset().left,
+            y = evt.pageY - $('#container').offset().top;
+        $('#position').html(x + " " + y);
+        console.log(evt);
+    });
+*/
+
 function Pin(component, name)
 {
 	this.name = name;
