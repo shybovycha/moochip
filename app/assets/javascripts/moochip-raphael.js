@@ -101,6 +101,7 @@ function Pin(component, name)
 			line.toBack();
 			
 			MooChip.scheme.connectionLines.push(line);
+			MooChip.scheme.updateConnectionLines();
 		} else {
 			console.log('Could not connect', [this, pin], 'because of', line);
 			// opera.postError('Could not connect', [this, pin], 'because of', line);
@@ -137,6 +138,7 @@ function Pin(component, name)
 				this.connectionLine = MooChip.paper.path('M' + x + ',' + y + 'L' + x + ',' + y).attr({'stroke': '#10097B', 'stroke-width': 3}); else
 					this.connectionLine.attr({'path': 'M' + x + ',' + y + 'L' + x + ',' + y});
 					
+			this.connectionLine.attr({ 'stroke-dasharray': '-' });
 			this.connectionLine.ox = x;
 			this.connectionLine.oy = y;
 			this.connectionTarget = null;
@@ -296,23 +298,53 @@ function Scheme() {
 	};
 	
 	this.updateConnectionLines = function(component) {
-		var pins = component.pins;
+		var routine = function(component, parent) {
+			var pins = component.pins;
 		
-		if (!pins)
-			return;
-		
-		for (var i = 0; i < pins.length; i++) {
-			var lines = this.connectionLine(pins[i].entity);
+			if (!pins)
+				return;
 			
-			if (!lines || !lines.length)
-				continue;
-
-			for (var t = 0; t < lines.length; t++) {
-				var line = lines[t], p1 = line.pinA.getPos(), p2 = line.pinB.getPos();
+			for (var i = 0; i < pins.length; i++) {
+				var lines = parent.connectionLine(pins[i].entity);
 				
-				line.attr({'path': 'M' + p1.x + ',' + p1.y + 'L' + p2.x + ',' + p2.y});
-				line.toBack();
+				if (!lines || !lines.length)
+					continue;
+
+				for (var t = 0; t < lines.length; t++) {
+					var line = lines[t], p1 = line.pinA.getPos(), p2 = line.pinB.getPos(), pts = line.points;
+					
+					var dx = Math.abs(p1.x - p2.x), dy = Math.abs(p1.y - p2.y);
+					
+					if (dx > 0 && dy > 0) {
+						var p3 = { x: p1.x, y: p2.y};
+						
+						line.points = [ p1, p3, p2 ];
+					} else {
+						line.points = [ p1, p2 ];
+					}
+					
+					// Resolve wire collisions here
+					
+					pts = line.points;
+					
+					var path = '';
+					
+					for (var j = 1; j < pts.length; j++) {
+						path += Raphael.format('M{0},{1}L{2},{3}', pts[j - 1].x, pts[j - 1].y, pts[j].x, pts[j].y);
+					}
+					
+					line.attr({ 'path': path });
+					line.toBack();
+				}
 			}
+		};
+		
+		if (!component) {
+			for (var i = 0; i < MooChip.scheme.components.length; i++) {
+				routine(MooChip.scheme.components[i], this);
+			}
+		} else {
+			routine(component, this);
 		}
 	}
 	
