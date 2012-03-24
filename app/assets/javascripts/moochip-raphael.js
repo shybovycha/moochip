@@ -10,6 +10,15 @@ MooChip.updatePinMeter = null;
 // set to 'true' for some speeding up!
 MooChip.lightMode = false;
 
+Raphael.getMousePos = function(event) {
+	var offset = { 
+			top: event.target.offsetTop + (parseFloat(event.target.style.marginTop) || 0), 
+			left: event.target.offsetLeft + (parseFloat(event.target.style.marginLeft) || 0) 
+		};
+	
+	return { x: event.layerX || (event.pageX - offset.left), y: event.layerY || (event.pageY - offset.top) };
+};
+
 MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 };
@@ -122,6 +131,45 @@ function Pin(component, name)
 			line.pinA = this.entity; 
 			line.pinB = pin.entity;
 			line.toBack();
+			line.attr({ 'stroke-width': 3, 'stroke': '#2E2E2E' });
+			
+			line.click(function() {
+				MooChip.scheme.unselectConnectionLine(this);
+
+				this.pointEntities = [];
+				
+				if (this.points) {
+					for (var i = 1; i < this.points.length - 1; i++) {
+						var p = this.points[i],
+							r = MooChip.paper.rect(p.x - 4, p.y - 4, 8, 8);
+							
+						r.attr({ 'fill': '#8A0829', 'stroke': '#8A0829' });
+						r.connectionLine = this;
+						r.pointIndex = i;
+						r.ox = r.attr('x');
+						r.oy = r.attr('y');
+						
+						var start = function(x, y) {
+								this.ox = x; this.oy = y; this.points = this.connectionLine.points;
+							},
+						
+							move = function(dx, dy, x, y, e) {
+								this.attr({ 'x': this.ox + dx, 'y': this.oy + dy });
+								this.connectionLine.points[this.pointIndex] = { 'x': x, 'y': y };
+							},
+							
+							end = function(e) {
+								MooChip.scheme.updateConnectionLines();
+							};
+						
+						r.drag(move, start, end);
+						
+						this.pointEntities.push(r);
+					}
+				} else {
+					console.log('There are no points');
+				}
+			});
 			
 			MooChip.scheme.connectionLines.push(line);
 			MooChip.scheme.updateConnectionLines();
@@ -271,7 +319,7 @@ function Component(type, name)
 			if (MooChip.lightMode)
 				MooChip.scheme.updateConnectionLines(entity.component);
 			
-			//console.log(name, ' dropped!');
+			// console.log(name, ' dropped!');
 			// opera.postError(name, ' dropped!');
 		};
 		
@@ -287,9 +335,15 @@ function Scheme() {
 	this.src = null;
 	this.queue = [];
 	this.selectedComponent = null;
+	this.selectedConnectionLine = null;
 	
 	MooChip.paper.canvas.onclick = function(e) {
-		var components = MooChip.scheme.components, entity = MooChip.paper.getElementByPoint(e.clientX, e.clientY);
+		var selectedElement = MooChip.paper.getElementByPoint(e.clientX, e.clientY);
+		
+		if (!selectedElement || (selectedElement != MooChip.scheme.selectedConnectionLine && selectedElement.connectionLine != MooChip.scheme.selectedConnectionLine))
+			MooChip.scheme.unselectConnectionLine();
+		
+		var components = MooChip.scheme.components, entity = selectedElement;
 		
 		for (var i = 0; i < components.length; i++) {
 			if (components[i].entity.selectionRect) {
@@ -314,6 +368,37 @@ function Scheme() {
 		}
 		
 		MooChip.scheme.selectedComponent = null;
+	};
+
+	this.unselectConnectionLine = function(line) {
+		// console.log('unselecting connection line');
+		
+		if (!MooChip.scheme.selectedConnectionLine) {
+			if (line) {
+				MooChip.scheme.selectedConnectionLine = line;
+			}
+				
+			return;
+		}
+			
+		var lines = [ MooChip.scheme.selectedConnectionLine, line ];
+		
+		for (var i = 0; i < lines.length; i++) {
+			var selected = lines[i];
+			
+			if (!selected || !selected.pointEntities)
+				continue;
+		
+			var pes = selected.pointEntities;
+			
+			for (var i = 0; i < pes.length; i++) {
+				pes[i].remove();
+			}
+			
+			selected.pointEntities = [];
+		}
+		
+		MooChip.scheme.selectedConnectionLine = line;
 	};
 	
 	this.connectionLine = function(pinA, pinB) {
@@ -383,14 +468,19 @@ function Scheme() {
 				for (var t = 0; t < lines.length; t++) {
 					var line = lines[t], p1 = line.pinA.getPos(), p2 = line.pinB.getPos(), pts = line.points;
 					
-					var dx = Math.abs(p1.x - p2.x), dy = Math.abs(p1.y - p2.y);
-					
-					if (dx > 0 && dy > 0) {
-						var p3 = { x: p1.x, y: p2.y};
+					if (!line.points) {
+						var dx = Math.abs(p1.x - p2.x), dy = Math.abs(p1.y - p2.y);
 						
-						line.points = [ p1, p3, p2 ];
+						if (dx > 0 && dy > 0) {
+							var p3 = { x: p1.x, y: p2.y};
+							
+							line.points = [ p1, p3, p2 ];
+						} else {
+							line.points = [ p1, p2 ];
+						}
 					} else {
-						line.points = [ p1, p2 ];
+						line.points[0] = p1;
+						line.points[line.length - 1] = p2;
 					}
 				}
 			}
