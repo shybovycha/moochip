@@ -7,8 +7,31 @@ MooChip.gridSize = 25;
 MooChip.invokeGlowColor = '#3AF7EE';
 MooChip.updatePinMeter = null;
 
+// set to 'true' for some speeding up!
+MooChip.lightMode = false;
+
 MooChip.distance = function(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+};
+
+Raphael.doLinesIntersect = function(path1, path2) {
+	var points = [ 
+			{ x: path1.x1, y: path1.y1 },
+			{ x: path1.x2, y: path1.y2 },
+			{ x: path2.x1, y: path2.y1 },
+			{ x: path2.x2, y: path2.y2 },
+		],
+		a = { x: Math.abs(points[1].x - points[0].x), y: Math.abs(points[1].y - points[0].y) },
+		b = { x: Math.abs(points[3].x - points[2].x), y: Math.abs(points[3].y - points[2].y) },
+		c = { x: Math.abs(points[2].x - points[1].x), y: Math.abs(points[2].y - points[1].y) },
+		d = { x: Math.abs(points[3].x - points[0].x), y: Math.abs(points[3].y - points[0].y) },
+		s1 = { x: a.x + b.x + c.x, y: a.y + b.y + c.y };
+	
+	//console.log(points, s1, d);
+	
+	if (s1.x == d.x && s1.y == d.y)
+		return 0; else 
+			return Math.sqrt(Math.pow(c.x, 2) + Math.pow(c.y, 2));
 };
 
 Raphael.st.getBBox = function() {
@@ -213,6 +236,12 @@ function Component(type, name)
 		start = function() {
 			entity.oBB = entity.getBBox();
 			pinEntity.oBB = pinEntity.getBBox();
+			
+			entity.attr({ 'opacity': 0.25});
+			pinEntity.attr({ 'opacity': 0.25});
+			
+			if (MooChip.lightMode)
+				MooChip.scheme.hideConnectionLines(entity.component);
 		},
 		
 		move = function(dx, dy) {
@@ -228,12 +257,21 @@ function Component(type, name)
 				if (e.glowEntity)
 					e.glowEntity.transform(transformStr);
 			});
-
-			MooChip.scheme.updateConnectionLines(entity.component);
+			
+			if (!MooChip.lightMode)
+				MooChip.scheme.updateConnectionLines(entity.component);
 		},
 		
 		up = function() {
-			console.log(name, ' dropped!');
+			entity.attr({ 'opacity': 1.0});
+			pinEntity.attr({ 'opacity': 1.0});
+			
+			MooChip.scheme.showConnectionLines(entity.component);
+			
+			if (MooChip.lightMode)
+				MooChip.scheme.updateConnectionLines(entity.component);
+			
+			//console.log(name, ' dropped!');
 			// opera.postError(name, ' dropped!');
 		};
 		
@@ -297,15 +335,47 @@ function Scheme() {
 		return res;
 	};
 	
+	this.hideConnectionLines = function(component) {
+		for (var i = 0; i < component.pins.length; i++) {
+			var pin = component.pins[i], lines = MooChip.scheme.connectionLine(pin.entity);
+			
+			if (!lines || lines.length <= 0)
+				continue;
+			
+			for (var t = 0; t < lines.length; t++) {
+				var line = lines[t];
+				
+				line.visible = false;
+				line.hide();
+			}
+		}
+	};
+	
+	this.showConnectionLines = function(component) {
+		for (var i = 0; i < component.pins.length; i++) {
+			var pin = component.pins[i], lines = MooChip.scheme.connectionLine(pin.entity);
+			
+			if (!lines || lines.length <= 0)
+				continue;
+			
+			for (var t = 0; t < lines.length; t++) {
+				var line = lines[t];
+				
+				line.visible = true;
+				line.show();
+			}
+		}
+	};
+	
 	this.updateConnectionLines = function(component) {
-		var routine = function(component, parent) {
+		var setPointsForComponentConnectionLines = function(component) { 
 			var pins = component.pins;
 		
 			if (!pins)
-				return;
-			
+				return [];
+				
 			for (var i = 0; i < pins.length; i++) {
-				var lines = parent.connectionLine(pins[i].entity);
+				var lines = MooChip.scheme.connectionLine(pins[i].entity);
 				
 				if (!lines || !lines.length)
 					continue;
@@ -322,12 +392,73 @@ function Scheme() {
 					} else {
 						line.points = [ p1, p2 ];
 					}
+				}
+			}
+		};
+		
+		var resolveWireCollisions = function() {
+			return;
+			
+			var lines = MooChip.scheme.connectionLines;
+			
+			for (var i1 = 0; i1 < lines.length; i1++) {
+				var line1 = lines[i1], pts1 = line1.points;
+				
+				if (!pts1)
+					continue;
+				
+				for (var i2 = 0; i2 < lines.length; i2++) {
+					if (i2 == i1)
+						continue;
+						
+					var line2 = lines[i2], pts2 = line2.points;
 					
-					// Resolve wire collisions here
+					if (!pts2)
+						continue;
 					
-					pts = line.points;
+					for (var t1 = 1; t1 < pts1.length; t1++) {
+						for (var t2 = 1; t2 < pts2.length; t2++) {
+							var path1 = { x1: pts1[t1 - 1].x, y1: pts1[t1 - 1].y, x2: pts1[t1].x, y2: pts1[t1].y }, 
+								path2 = { x1: pts2[t2 - 1].x, y1: pts2[t2 - 1].y, x2: pts2[t2].x, y2: pts2[t2].y },
+								intersection = Raphael.doLinesIntersect(path1, path2);
+								
+							if (!intersection)
+								continue;
+								
+							console.log('Intersection: ', intersection, ' @ ', 
+								//Raphael.format('Raphael.doLinesIntersect({ x1: {0}, y1: {1}, x2: {2}, y2: {3} }, { x1: {4}, y1: {5}, x2: {6}, y2: {7} })', path1.x1, path1.y1, path1.x2, path1.y2, path2.x1, path2.y1, path2.x2, path2.y2),
+								path1, path2);
+								
+							line1.glow({ color: '#f00' });
+							line2.glow({ color: '#00f' });
+							
+							break;
+						}
+					}
+				}
+			}
+		};
+			
+		var routine = function(component) {
+			var pins = component.pins;
+		
+			if (!pins)
+				return;
+			
+			//resolveWireCollisions(MooChip.scheme.connectionLines);
 					
-					var path = '';
+			for (var i = 0; i < pins.length; i++) {
+				var lines = MooChip.scheme.connectionLine(pins[i].entity);
+				
+				if (!lines || !lines.length)
+					continue;
+					
+				for (var t = 0; t < lines.length; t++) {
+					var line = lines[t], path = '';
+					
+					setPointsForComponentConnectionLines(component);
+					
+					var pts = line.points;
 					
 					for (var j = 1; j < pts.length; j++) {
 						path += Raphael.format('M{0},{1}L{2},{3}', pts[j - 1].x, pts[j - 1].y, pts[j].x, pts[j].y);
@@ -341,10 +472,10 @@ function Scheme() {
 		
 		if (!component) {
 			for (var i = 0; i < MooChip.scheme.components.length; i++) {
-				routine(MooChip.scheme.components[i], this);
+				routine(MooChip.scheme.components[i]);
 			}
 		} else {
-			routine(component, this);
+			routine(component);
 		}
 	}
 	
