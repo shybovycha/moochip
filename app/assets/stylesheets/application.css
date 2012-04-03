@@ -15,10 +15,13 @@
 body {
 	background-color: #F4C481;
 	margin: 0;
+	margin-bottom: 80px;
 }
 
 .content {
 	padding: 10px;
+	position: relative;
+	height: 600px;
 }
 
 .navigation-menu {
@@ -104,10 +107,10 @@ body {
 
 .footer { 
 	background: #BDBDBD; 
-	bottom: 25px; 
+	bottom: 0;
 	margin-top: 20px; 
 	width: 100%; 
-	position: static; 
+	position: fixed;
 	opacity: 0.375; 
 	text-align: center; 
 	padding: 5px 0;

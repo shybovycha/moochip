@@ -137,8 +137,7 @@
 				<%= image_tag 'screens/pin-hover.jpg' %>
 				<br />
 				Now, press your left mouse button keeping mouse cursor over the pin, 
-				<strong>do not unpress it yet</strong> and move a bit away from the pin - the blue line
-				will appear coming out of the selected pin and showing that you are trying to connect
+				<strong>do not unpress it yet</strong> and move a bit away from the pin - the blue dashed line will appear coming out of the selected pin and showing that you are trying to connect
 				that pin to some other pin<br />
 				<%= image_tag 'screens/pin-drag.jpg' %>
 				<br />
@@ -146,6 +145,51 @@
 				you want connect to until the blue circle appears around that other pin. Only then
 				you can release your left mouse button.<br />
 				<%= image_tag 'screens/pin-connect.jpg' %>
+				<br />
+				The connection line will appear. It will automaticly create some bends.
+				<%= image_tag 'screens/connection-line-created.jpg' %>
+				<br />
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				Edit connection
+			</td>
+			
+			<td>
+				Move your mouse to the connection line you want to edit. The connection line is the bended line which connects two component' pins. Usually it has dark color like black.
+				Click on the connection line to select it.<br />
+				<%= image_tag 'screens/connection-line-select.jpg' %>
+				<br />
+				The red rectangles will appear. They are <strong>base points</strong>. They determine where the connection line should follow. Connected together one-to-one and to the component' pins, they
+				form a connection line. You can drag them to change the connection line<br />
+				<%= image_tag 'screens/base-point-drag.jpg' %>
+				<br />
+				Connection line will be updated immediatly - it is a bit hard for your browser but more pretty. Yet it could be configured (simply run <em>MooChip.lightMode = true</em> within your JS console).<br />
+				<%= image_tag 'screens/base-point-drop.jpg' %>
+				<br />
+				You can create base points double-clicking on the connection line.<br />
+				<%= image_tag 'screens/base-point-create.jpg' %>
+				<br />
+				Base points are removed with double-clicking on them.<br />
+				<%= image_tag 'screens/base-point-remove.jpg' %>
+				<br />
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				Remove single connection
+			</td>
+			
+			<td>
+				First of all, select the connection line you want to remove.<br />
+				<%= image_tag 'screens/connection-line-select.jpg' %>
+				<br />
+				Then simply click the <em>Remove</em> button <%= image_tag 'buttons/cross-script.png' %> - and viola!
+				<%= image_tag 'screens/connection-line-remove.jpg' %>
+				<br />
 			</td>
 		</tr>
 		
@@ -155,8 +199,24 @@
 			</td>
 			
 			<td>
-				Select the component and click the remove button  <%= image_tag 'buttons/cross-script.png' %>
-				in the toolbar.
+				Select the component and click the remove button <%= image_tag 'buttons/cross-script.png' %>
+				in the toolbar.<br />
+				<%= image_tag 'screens/circuit-sample.jpg' %>
+				<br />
+				<%= image_tag 'screens/component-remove.jpg' %>
+				<br />
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				Cancel selection
+			</td>
+			
+			<td>
+				Click somewhere on the sheet where no connection lines, pins or components are located.<br />
+				<%= image_tag 'screens/circuit-sample.jpg' %>
+				<br />
 			</td>
 		</tr>
 		

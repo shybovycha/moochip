@@ -159,6 +159,10 @@ function Pin(component, name)
 								var bbox = this.getBBox(), x = this.ox + _dx, y = this.oy + _dy;
 								this.attr({ 'x': x, 'y': y });
 								this.connectionLine.points[this.pointIndex] = { 'x': x + (bbox.width / 2), 'y': y + (bbox.height / 2) };
+
+								if (MooChip.lightMode == false) {
+									MooChip.scheme.updateConnectionLines();
+								}
 							},
 							
 							end = function(e) {
