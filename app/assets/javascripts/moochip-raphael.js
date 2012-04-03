@@ -135,6 +135,13 @@ function Pin(component, name)
 			
 			line.updatePoints = function() {
 				MooChip.scheme.unselectConnectionLine(this);
+				
+				var _p1 = this.points[0], _p2 = { x: this.pinA.attr('x'), y: this.pinA.attr('y') }, _p3 = { x: this.pinB.attr('x'), y: this.pinB.attr('y') };
+				
+				/*if (MooChip.distance(_p1.x, _p1.y, _p2.x, _p2.y) > MooChip.distance(_p1.x, _p1.y, _p3.x, _p3.y)) {
+					// this.points = this.points.reverse();
+					console.log('reversed points');
+				}*/
 
 				this.pointEntities = [];
 				
@@ -164,20 +171,24 @@ function Pin(component, name)
 							};
 						
 						r.drag(move, start, end);
+						
 						r.dblclick(function() {
-							var points = this.connectionLine.points, min = 0, p = this.getPos();
+							var points = this.connectionLine.points, min = -1, p = this.getPos();
 							
 							for (var i = 0; i < points.length; i++) {
-								if (MooChip.distance(p, points[i]) < MooChip.distance(p, points[min])) {
+								if (points[i].x == p.x && points[i].y == p.y) {
 									min = i;
+									break;
 								}
 							}
 							
-							console.log(min, this.connectionLine.points);
+							if (min < 0 || min > points.length) {
+								console.log('Could not remove point');
+								
+								return;
+							}
 							
 							this.connectionLine.points = points.slice(0, min).concat(points.slice(min + 1));
-							
-							console.log(min, this.connectionLine.points);
 							
 							this.remove();
 							
@@ -196,25 +207,29 @@ function Pin(component, name)
 			});
 			
 			line.dblclick(function(_e) {
-				var _pos = Raphael.getMousePos(_e), p = { 'x': _pos.x, 'y': _pos.y }, min = 0, fl = false;
+				var _pos = Raphael.getMousePos(_e), p = { 'x': _pos.x, 'y': _pos.y }, min = -1;
 				
 				for (var i = 1; i < this.points.length; i++) {
-					var p2 = this.points[i], p3 = this.points[min];
-					
-					if (MooChip.distance(p.x, p.y, p2.x, p2.y) < MooChip.distance(p.x, p.y, p3.x, p3.y)) {
+					var p2 = this.points[i], p3 = this.points[i - 1],
+						d_a_c = MooChip.distance(p.x, p.y, p2.x, p2.y),
+						d_b_c = MooChip.distance(p.x, p.y, p3.x, p3.y),
+						d_a_b = MooChip.distance(p2.x, p2.y, p3.x, p3.y);
+						
+					if (Math.abs(d_a_b - (d_a_c + d_b_c)) <= 3) {
 						min = i;
-						fl = true;
+						
+						break;
 					}
 				}
 				
-				if (min + 1 < this.points.length) {
-					this.points = this.points.slice(0, min + 1).concat([ p ], this.points.slice(min + 1));
-				} else if (!fl) {
-					this.points = this.points.slice(0, 1).concat([ p ], this.points.slice(1));
-				} else {
-					this.points = this.points.slice(0, this.points.length - 1).concat([ p ], this.points.slice(this.points.length - 1));
+				if (min < 0 || min > this.points.length) {
+					console.log('Could not add point');
+					
+					return;
 				}
 				
+				this.points = this.points.slice(0, min).concat([ p ], this.points.slice(min));
+
 				this.updatePoints();
 				
 				MooChip.scheme.updateConnectionLines();
