@@ -5,8 +5,32 @@
         <title>moochip raphael demo</title>
 		
 		<style type="text/css">
-		.footer { background: #0489B1; bottom: 25px; margin: 20px; width: 100%; position: fixed; left: -20px; opacity: 0.375; text-align: center; }
-		.footer p { padding: 0; margin: 5px; }
+		.footer {
+			background: #BDBDBD; 
+			bottom: 25px; 
+			margin-top: 20px; 
+			width: 100%; 
+			position: static; 
+			opacity: 0.375; 
+			text-align: center; 
+			padding: 5px 0;
+			font-family: Lucida Console;
+			font-size: 10px;
+		}
+		
+		body {
+			margin: 0;
+		}
+
+		.content {
+			padding: 10px;
+		}
+		
+		.footer p { 
+			padding: 0; 
+			margin: 5px; 
+		}
+		
 		/*.menu { z-index: 100; }
 		#holder { z-index: 100; }*/
 		</style>
@@ -90,21 +114,24 @@
     </head>
 	
     <body>
-		<div class="menu">
-			<a href="#" onclick="add('resistor')" title="create a new resistor">resistor</a>
-			<a href="#" onclick="add('diode')" title="create a new diode">diode</a>
-			<a href="#" onclick="add('dc_source')" title="create a new DC source">DC source</a>
-			<a href="#" onclick="add('wire')" title="create a new wire">wire</a>
-			&nbsp;|&nbsp;
-			<a href="#" onclick="rotate_selected()" title="rotate selected component 90&deg; clockwise">rotate</a>
-			<a href="#" onclick="remove_selected()" title="remove selected component">remove</a>
-			&nbsp;|&nbsp;
-			<a href="#" onclick="reset_scheme()" title="stop any executions and reset components' states">reset</a>
-			<a href="#" onclick="simple_step()" title="step execution one component along">simple step</a>
-			<a href="#" onclick="full_step()" title="step execution all components at once">full step</a>
+		<div class="content">
+			<div class="menu">
+				<a href="#" onclick="add('resistor')" title="create a new resistor">resistor</a>
+				<a href="#" onclick="add('diode')" title="create a new diode">diode</a>
+				<a href="#" onclick="add('dc_source')" title="create a new DC source">DC source</a>
+				<a href="#" onclick="add('wire')" title="create a new wire">wire</a>
+				&nbsp;|&nbsp;
+				<a href="#" onclick="rotate_selected()" title="rotate selected component 90&deg; clockwise">rotate</a>
+				<a href="#" onclick="remove_selected()" title="remove selected component">remove</a>
+				&nbsp;|&nbsp;
+				<a href="#" onclick="reset_scheme()" title="stop any executions and reset components' states">reset</a>
+				<a href="#" onclick="simple_step()" title="step execution one component along">simple step</a>
+				<a href="#" onclick="full_step()" title="step execution all components at once">full step</a>
+			</div>
+			
+			
+			<div id="holder" style="border: 1px solid black; width: 700px; height: 700px;"></div>
 		</div>
-		
-        <div id="holder" style="border: 1px solid black; width: 700px; height: 700px;"></div>
 		
 		<div class="footer">
 			<p>

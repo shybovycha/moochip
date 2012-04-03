@@ -14,6 +14,11 @@
 
 body {
 	background-color: #F4C481;
+	margin: 0;
+}
+
+.content {
+	padding: 10px;
 }
 
 .navigation-menu {
@@ -98,14 +103,16 @@ body {
 }
 
 .footer { 
-	background: #0489B1; 
+	background: #BDBDBD; 
 	bottom: 25px; 
-	margin: 20px; 
+	margin-top: 20px; 
 	width: 100%; 
-	position: fixed; 
-	left: -20px; 
+	position: static; 
 	opacity: 0.375; 
 	text-align: center; 
+	padding: 5px 0;
+	font-family: Lucida Console;
+	font-size: 10px;
 }
 
 .footer p { 
