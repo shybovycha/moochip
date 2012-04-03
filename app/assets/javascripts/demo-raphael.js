@@ -70,7 +70,9 @@ function rotate_selected() {
 
 function remove_selected() {
 	if (MooChip.scheme.selectedComponent)
-		MooChip.scheme.remove(MooChip.scheme.selectedComponent);
+		MooChip.scheme.remove(MooChip.scheme.selectedComponent); else
+	if (MooChip.scheme.selectedConnectionLine)
+		MooChip.scheme.removeSelectedConnectionLine();
 }
 
 function reset_scheme() {

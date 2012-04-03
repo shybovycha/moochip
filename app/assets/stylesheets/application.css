@@ -96,3 +96,19 @@ body {
 .search-bar {
 	margin-bottom: 10px;
 }
+
+.footer { 
+	background: #0489B1; 
+	bottom: 25px; 
+	margin: 20px; 
+	width: 100%; 
+	position: fixed; 
+	left: -20px; 
+	opacity: 0.375; 
+	text-align: center; 
+}
+
+.footer p { 
+	padding: 0; 
+	margin: 5px; 
+}

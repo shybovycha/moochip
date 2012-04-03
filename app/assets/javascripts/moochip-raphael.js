@@ -138,11 +138,6 @@ function Pin(component, name)
 				
 				var _p1 = this.points[0], _p2 = { x: this.pinA.attr('x'), y: this.pinA.attr('y') }, _p3 = { x: this.pinB.attr('x'), y: this.pinB.attr('y') };
 				
-				/*if (MooChip.distance(_p1.x, _p1.y, _p2.x, _p2.y) > MooChip.distance(_p1.x, _p1.y, _p3.x, _p3.y)) {
-					// this.points = this.points.reverse();
-					console.log('reversed points');
-				}*/
-
 				this.pointEntities = [];
 				
 				if (this.points) {
@@ -620,6 +615,21 @@ function Scheme() {
 			}
 		} else {
 			routine(component);
+		}
+	}
+	
+	this.removeSelectedConnectionLine = function() {
+		if (!this.selectedConnectionLine) {
+			return;
+		}
+		
+		for (var i = 0; i < this.components.length; i++) {
+			for (var t = 0; t < this.components[i].pins.length; t++) {
+				if (this.components[i].pins[t].pinEntity == this.selectionLine.pinA || 
+					this.components[i].pins[t].pinEntity == this.selectionLine.pinB) {
+					
+				}
+			}
 		}
 	}
 	
