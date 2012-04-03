@@ -1,6 +1,7 @@
 Moochip::Application.routes.draw do
   match 'developers' => 'home#developers'
   match 'demo-raphael' => 'home#demo_raphael'
+  match 'license' => 'home#license'
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

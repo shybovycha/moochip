@@ -620,17 +620,37 @@ function Scheme() {
 	
 	this.removeSelectedConnectionLine = function() {
 		if (!this.selectedConnectionLine) {
+			console.log('No connection to remove');
 			return;
 		}
 		
-		for (var i = 0; i < this.components.length; i++) {
-			for (var t = 0; t < this.components[i].pins.length; t++) {
-				if (this.components[i].pins[t].pinEntity == this.selectionLine.pinA || 
-					this.components[i].pins[t].pinEntity == this.selectionLine.pinB) {
-					
-				}
+		var pinA = this.selectedConnectionLine.pinA.pin,
+			pinB = this.selectedConnectionLine.pinB.pin,
+			connectionsA = pinA.connections,
+			connectionsB = pinB.connections,
+			points = this.selectedConnectionLine.pointEntities;
+			
+		for (var i = 0; i < connectionsA.length; i++) {
+			if (connectionsA[i] == pinB) {
+				this.selectedConnectionLine.pinA.pin.connections = connectionsA.slice(0, i).concat(connectionsA.slice(i + 1));
+				break;
 			}
 		}
+		
+		for (var i = 0; i < connectionsB.length; i++) {
+			if (connectionsB[i] == pinA) {
+				this.selectedConnectionLine.pinB.pin.connections = connectionsB.slice(0, i).concat(connectionsB.slice(i + 1));
+				break;
+			}
+		}
+		
+		for (var i = 0; i < points.length; i++) {
+			points[i].remove();
+		}
+		
+		this.selectedConnectionLine.remove();
+		
+		this.updateConnectionLines();
 	}
 	
 	this.remove = function(component) {
