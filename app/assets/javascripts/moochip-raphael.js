@@ -5,6 +5,7 @@ MooChip.scheme = null;
 MooChip.stopRunning = false;
 MooChip.gridSize = 25;
 MooChip.invokeGlowColor = '#3AF7EE';
+MooChip.afterSimulationInvokeGlowColor = '#1CC49A';
 MooChip.updatePinMeter = null;
 
 // set to 'true' for some speeding up!
@@ -532,16 +533,14 @@ function Scheme() {
 							Raphael.isBBoxIntersect({ x: p1.x, y: p1.y, x2: p3.x, y2: p3.y }, bbox) ||
 							Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p2.x, y2: p2.y }, bbox) ||
 							Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p1.x, y2: p1.y }, bbox) ||
-							Raphael.isBBoxIntersect({ x: p2.x, y: p2.y, x2: p3.x, y2: p3.y }, bbox)) {
-							console.log("MOO");
+							Raphael.isBBoxIntersect({ x: p2.x, y: p2.y, x2: p3.x, y2: p3.y }, bbox)) 
+						{
 							p3 = { x: p2.x, y: p1.y};
 							break;
 						}
 					}
 					
 					line.points = [ p1, p3, p2 ];
-					
-					console.log('p1, p2, p3', [p1, p2, p3]);
 				} else {
 					line.points = [ p1, p2 ];
 				}
@@ -551,49 +550,6 @@ function Scheme() {
 			}
 		};
 		
-		var resolveWireCollisions = function() {
-			return;
-			
-			var lines = MooChip.scheme.connectionLines;
-			
-			for (var i1 = 0; i1 < lines.length; i1++) {
-				var line1 = lines[i1], pts1 = line1.points;
-				
-				if (!pts1)
-					continue;
-				
-				for (var i2 = 0; i2 < lines.length; i2++) {
-					if (i2 == i1)
-						continue;
-						
-					var line2 = lines[i2], pts2 = line2.points;
-					
-					if (!pts2)
-						continue;
-					
-					for (var t1 = 1; t1 < pts1.length; t1++) {
-						for (var t2 = 1; t2 < pts2.length; t2++) {
-							var path1 = { x1: pts1[t1 - 1].x, y1: pts1[t1 - 1].y, x2: pts1[t1].x, y2: pts1[t1].y }, 
-								path2 = { x1: pts2[t2 - 1].x, y1: pts2[t2 - 1].y, x2: pts2[t2].x, y2: pts2[t2].y },
-								intersection = Raphael.doLinesIntersect(path1, path2);
-								
-							if (!intersection)
-								continue;
-								
-							console.log('Intersection: ', intersection, ' @ ', 
-								//Raphael.format('Raphael.doLinesIntersect({ x1: {0}, y1: {1}, x2: {2}, y2: {3} }, { x1: {4}, y1: {5}, x2: {6}, y2: {7} })', path1.x1, path1.y1, path1.x2, path1.y2, path2.x1, path2.y1, path2.x2, path2.y2),
-								path1, path2);
-								
-							line1.glow({ color: '#f00' });
-							line2.glow({ color: '#00f' });
-							
-							break;
-						}
-					}
-				}
-			}
-		};
-			
 		var routine = function(component) {
 			var pins = component.pins;
 		
@@ -603,8 +559,6 @@ function Scheme() {
 				return;
 			}
 			
-			//resolveWireCollisions(MooChip.scheme.connectionLines);
-					
 			for (var i = 0; i < pins.length; i++) {
 				var lines = MooChip.scheme.connectionLine(pins[i].entity);
 				
@@ -614,7 +568,6 @@ function Scheme() {
 				for (var t = 0; t < lines.length; t++) {
 					var line = lines[t], path = '';
 					
-					// setPointsForComponentConnectionLines(component);
 					setPointsForConnectionLine(line);
 					
 					var pts = line.points;
@@ -830,7 +783,19 @@ function Scheme() {
 			this.queue = [ _tmp ];
 		}
 		
-		var _it = this.queue.shift(), _newIt = [];
+		var _it = this.queue.shift(), _newIt = [], _negativeSrcPin = this.src.pin('negative');
+		
+		for (var t = 0; t < _it.length; t++) {
+			if ((_it[t].component == this.src && _it[t].name == 'negative') || _it[t] == _negativeSrcPin) {
+				console.log('src reached!');
+				
+				for (var i = 0; i < this.components.length; i++) {
+					if (this.components[i].entity.unglow) {
+						this.components[i].entity.unglow();
+					}
+				}
+			}
+		}
 		
 		if (!_it || !_it.length)
 			return;
@@ -874,6 +839,12 @@ function Scheme() {
 		}
 		
 		this.queue.push(_newIt);
+		
+		for (var i = 0; i < this.components.length; i++) {
+			if (this.components[i].afterSimulation) {
+				this.components[i].afterSimulation();
+			}
+		}
 	}
 	
 	this.fullCircuitStep = function() {
@@ -948,6 +919,12 @@ function Scheme() {
 				console.log('No component changes - stopping forward iterations');
 				console.log('Queue left: ', this.queue);
 				return;
+			}
+			
+			for (var i = 0; i < this.components.length; i++) {
+				if (this.components[i].afterSimulation) {
+					this.components[i].afterSimulation();
+				}
 			}
 		}
 	}

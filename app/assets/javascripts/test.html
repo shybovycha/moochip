@@ -53,24 +53,11 @@
 			
 			MooChip.paper = R;
 			MooChip.scheme = new Scheme();
-
-			MooChip.paper.x = MooChip.paper.x || 0;
-			MooChip.paper.y = MooChip.paper.y || 0;
-			MooChip.paper.width = MooChip.paper.width || 100;
-			MooChip.paper.height = MooChip.paper.height || 100;
-
-			MooChip.paper.orig_x = MooChip.paper.x;
-			MooChip.paper.orig_y = MooChip.paper.y;
-			MooChip.paper.orig_width = MooChip.paper.width;
-			MooChip.paper.orig_height = MooChip.paper.height;
-
-			MooChip.paper.zoom_level = 1;
-			MooChip.paper.zoom_step = 1.0 / 10.0;
 		};
 		
 		function add(type) {
 			var generateName = function(type) {
-				var prefixes = { 'resistor': 'r', 'diode': 'vd', 'wire': '-', 'dc_source': 'src'}, components = MooChip.scheme.components, cnt = 1;
+				var prefixes = { 'resistor': 'r', 'diode': 'vd', 'wire': '-', 'dc_source': 'src', 'capacitor': 'c', 'pnp_transistor': 'vt', 'npn_transistor': 'vt' }, components = MooChip.scheme.components, cnt = 1;
 				
 				for (var i = 0; i < components.length; i++) {
 					if (components[i].type == type) {
@@ -95,6 +82,18 @@
 			} else
 			if (type == 'wire') {
 				var a = new Wire(generateName(type));
+				MooChip.scheme.add(a);
+			} else
+			if (type == 'capacitor') {
+				var a = new Capacitor(generateName(type));
+				MooChip.scheme.add(a);
+			} else
+			if (type == 'pnp_transistor') {
+				var a = new PNPTransistor(generateName(type));
+				MooChip.scheme.add(a);
+			} else
+			if (type == 'npn_transistor') {
+				var a = new NPNTransistor(generateName(type));
 				MooChip.scheme.add(a);
 			}
 		}
@@ -123,28 +122,6 @@
 		function full_step() {
 			MooChip.scheme.fullCircuitStep();
 		}
-
-		function zoom_out() {
-			MooChip.paper.zoom_level -= MooChip.paper.zoom_step * 100;
-			MooChip.paper.setViewBox(MooChip.paper.orig_x + MooChip.paper.zoom_level,
-				MooChip.paper.orig_y + MooChip.paper.zoom_level,
-				MooChip.paper.orig_width,
-				MooChip.paper.orig_height,
-				false);
-		}
-
-		function zoom_in() {
-			MooChip.paper.zoom_level += MooChip.paper.zoom_step * 100;
-			MooChip.paper.setViewBox(MooChip.paper.orig_x + MooChip.paper.zoom_level,
-				MooChip.paper.orig_y + MooChip.paper.zoom_level,
-				MooChip.paper.orig_width,
-				MooChip.paper.orig_height,
-				false);
-		}
-
-		function pan_mode() {
-			
-		}
         </script>
     </head>
 	
@@ -153,6 +130,9 @@
 			<div class="menu">
 				<a href="#" onclick="add('resistor')" title="create a new resistor">resistor</a>
 				<a href="#" onclick="add('diode')" title="create a new diode">diode</a>
+				<a href="#" onclick="add('capacitor')" title="create a new wire">capacitor</a>
+				<a href="#" onclick="add('pnp_transistor')" title="create a new wire">PNP transistor</a>
+				<a href="#" onclick="add('npn_transistor')" title="create a new wire">NPN transistor</a>
 				<a href="#" onclick="add('dc_source')" title="create a new DC source">DC source</a>
 				<a href="#" onclick="add('wire')" title="create a new wire">wire</a>
 				&nbsp;|&nbsp;
@@ -162,10 +142,6 @@
 				<a href="#" onclick="reset_scheme()" title="stop any executions and reset components' states">reset</a>
 				<a href="#" onclick="simple_step()" title="step execution one component along">simple step</a>
 				<a href="#" onclick="full_step()" title="step execution all components at once">full step</a>
-				&nbsp;|&nbsp;
-				<a href="#" onclick="zoom_out()" title="stop any executions and reset components' states">zoom out</a>
-				<a href="#" onclick="zoom_in()" title="step execution one component along">zoom in</a>
-				<a href="#" onclick="pan_mode()" title="step execution all components at once">pan sheet</a>
 			</div>
 			
 			

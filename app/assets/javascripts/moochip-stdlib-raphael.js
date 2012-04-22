@@ -90,6 +90,9 @@ Diode = function(name) {
 	tmp.updateDragFunctions();
 	
 	tmp.invoke = function(pin, I, U) {
+		this.pin('cathode').i = 0;
+		this.pin('cathode').u = 0;
+		
 		if (pin == this.pin('anode') && this.pin('cathode').src == 'negative') {
 			this.pin('cathode').i = I;
 			this.pin('cathode').u = U;
@@ -352,6 +355,125 @@ NPNTransistor = function(name, h21e) {
 			return true;*/
 			
 		return false;
+	};
+	
+	return tmp;
+}
+
+Capacitor = function(name) {
+	var tmp = new Component('capacitor');
+	
+	tmp.name = name;
+	
+	tmp.pins.push(new Pin(tmp, 'a'));
+	tmp.pins.push(new Pin(tmp, 'b'));
+	
+	tmp.entity = MooChip.paper.set();
+	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
+	tmp.entity.push(MooChip.paper.path('M60,40L80,40'));
+	tmp.entity.push(MooChip.paper.path('M40,20L40,60'));
+	tmp.entity.push(MooChip.paper.path('M60,20L60,60'));
+	tmp.entity.push(MooChip.paper.rect(41, 20, 18, 40).attr({ 'stroke': 'none', 'stroke-width': 0, 'fill': '#FFF', 'opacity': 0.75 }));
+	tmp.entity.component = tmp;
+	tmp.entity.forEach(function(e) { e.component = tmp; });
+
+	tmp.pinEntity = MooChip.paper.set();
+	
+	var pinA = tmp.pin('a'), pinB = tmp.pin('b');
+
+	pinA.createEntity(20, 40);
+	pinB.createEntity(80, 40);
+	
+	tmp.pinEntity.push(pinA.entity);
+	tmp.pinEntity.push(pinB.entity);
+	
+	tmp.updateDragFunctions();
+	
+	tmp.Q = 0.0;
+	tmp.C = 1.0;
+	tmp.U = 9.0;
+	tmp.R = 1.0;
+	
+	// tmp.Qmax = tmp.U * tmp.C;
+	
+	tmp.invoke = function(pin, I, U) {
+		if (pin == this.pin('a')) {
+			this.pin('b').i = 0;
+			this.pin('b').u = 0;
+		} else
+		if (pin == this.pin('b')) {
+			this.pin('a').i = 0;
+			this.pin('a').u = 0;
+		}
+
+		if (pin == this.pin('a') && this.pin('b').src == 'negative') {
+			if (this.Q < this.U * this.C) {
+				this.pin('b').i = I;
+				this.pin('b').u = U;
+				this.Q += U * this.C;
+				
+				console.log('pinb');
+			} else {
+				console.log(this.name, 'is full...');
+				
+				return;
+			}
+			
+			console.log(this.name, '!');
+			
+			this.entity.glow({'color': MooChip.invokeGlowColor})
+		} else
+		if (pin == this.pin('b') && this.pin('a').src == 'negative') {
+			if (this.Q < this.U * this.C) {
+				this.pin('a').i = I;
+				this.pin('a').u = U;
+				this.Q += U * this.C;
+				
+				console.log('pina');
+			} else {
+				console.log(this.name, 'is full...');
+				
+				return;
+			}
+			
+			console.log(this.name, '!');
+			
+			this.entity.glow({'color': MooChip.invokeGlowColor})
+		}
+	};
+	
+	tmp.uninvoke = function() {
+		this.entity.unglow();
+	};
+	
+	tmp.conduction = function(pinA, pinB) {
+		if (this.Q < this.U * this.C)
+			return true; else
+				return false;
+	};
+	
+	tmp.uninvoke = function() {
+		this.Q = 0.0;
+		this.entity.unglow();
+	};
+	
+	tmp.afterSimulation = function() {
+		if (this.Q > 0) {
+			var U = this.Q / this.C, I = U * this.R;
+			
+			if (this.pin('a').src == 'negative') {
+				this.pin('a').i = I;
+				this.pin('a').u = U;
+			} else
+			if (this.pin('b').src == 'negative') {
+				this.pin('b').i = I;
+				this.pin('b').u = U;
+			}
+			
+			console.log(this.name, '! (shadow)');
+			
+			this.entity.glow({'color': MooChip.afterSimulationInvokeGlowColor});
+		}
 	};
 	
 	return tmp;
