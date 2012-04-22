@@ -3,7 +3,7 @@ function MooChip() {}
 MooChip.paper = null;
 MooChip.scheme = null;
 MooChip.stopRunning = false;
-MooChip.gridSize = 25;
+MooChip.gridSize = 15;
 MooChip.invokeGlowColor = '#3AF7EE';
 MooChip.afterSimulationInvokeGlowColor = '#1CC49A';
 MooChip.updatePinMeter = null;
@@ -520,29 +520,162 @@ function Scheme() {
 		var setPointsForConnectionLine = function(line) { 
 			var p1 = line.pinA.getPos(), p2 = line.pinB.getPos();
 			
-			if (!line.points) {
-				var dx = Math.abs(p1.x - p2.x), dy = Math.abs(p1.y - p2.y);
+			function getPathBetween(start, goal, h, isWalkable) {
+				start.h = h(start, goal);
+				start.g = 0;
+				start.f = start.g + start.h;
 				
-				if (dx > 0 && dy > 0) {
-					var p3 = { x: p1.x, y: p2.y};
+				start.cameFrom = start;
+				
+				var opened = [ start ], closed = [];
+				
+				var reconstructPath = function(start, goal) {
+					var result = [], current = goal;
 					
-					for (var i = 0; i < MooChip.scheme.components.length; i++) {
-						var bbox = MooChip.scheme.components[i].entity.getBBox();
-						
-						if ((p3.x >= bbox.x && p3.x <= bbox.x + bbox.width && p3.y >= bbox.y && p3.y <= bbox.y + bbox.height) ||
-							Raphael.isBBoxIntersect({ x: p1.x, y: p1.y, x2: p3.x, y2: p3.y }, bbox) ||
-							Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p2.x, y2: p2.y }, bbox) ||
-							Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p1.x, y2: p1.y }, bbox) ||
-							Raphael.isBBoxIntersect({ x: p2.x, y: p2.y, x2: p3.x, y2: p3.y }, bbox)) 
-						{
-							p3 = { x: p2.x, y: p1.y};
-							break;
+					while (current != start) {
+						result.push(current);
+						current = current.cameFrom;
+					}
+					
+					result.push(start);
+					
+					return result;
+				};
+				
+				var lastCurrent = null;
+				
+				while (opened.length > 0) {
+					var minF = 0;
+					
+					for (var i = 0; i < opened.length; i++) {
+						if (opened[i].f < opened[minF].f) {
+							minF = i;
 						}
 					}
 					
-					line.points = [ p1, p3, p2 ];
+					current = opened[minF];
+					opened = opened.slice(0, opened.indexOf(current)).concat(opened.slice(opened.indexOf(current) + 1));
+					closed.push(current);
+					
+					if (current.f <= MooChip.gridSize) {
+						goal.cameFrom = current;
+						closed.push(goal);
+						return reconstructPath(start, goal);
+					}
+					
+					if (lastCurrent && lastCurrent.f < current.f) {
+						goal.cameFrom = lastCurrent;
+						closed.push(goal);
+						return reconstructPath(start, goal);
+					}
+					
+					var step = MooChip.gridSize,
+						temp = [
+							{ x: current.x + step, y: current.y },
+							{ x: current.x - step, y: current.y },
+							{ x: current.x, y: current.y + step },
+							{ x: current.x, y: current.y - step },
+							{ x: current.x + step, y: current.y + step },
+							{ x: current.x + step, y: current.y - step },
+							{ x: current.x - step, y: current.y + step },
+							{ x: current.x - step, y: current.y - step },
+						];
+						
+					for (var i = 0; i < temp.length; i++) {
+						if (temp[i].x < 0 || temp[i].y < 0 || temp[i].x > MooChip.paper.width || temp[i].y > MooChip.paper.height) {
+							continue;
+						}
+							
+						if (closed.indexOf(temp[i]) > -1 || !isWalkable(temp[i])) {
+							continue;
+						}
+						
+						if (opened.indexOf(temp[i]) < 0) {
+							var X = temp[i];
+							
+							X.cameFrom = current;
+							X.g = current.g + 1;
+							X.h = h(X, goal);
+							X.f = X.g + X.h;
+							
+							opened.push(X);
+						} else {
+							var yIndex = opened.indexOf(X), X = temp[i], Y = opened[yIndex];
+							
+							if (X.g < Y.g) {
+								X.cameFrom = current;
+								X.g = current.g + 1;
+								X.h = h(X, goal);
+								X.f = X.g + X.h;
+								
+								opened = opened.slice(0, yIndex).concat(yIndex + 1);
+								opened.push(X);
+							}
+						}
+					}
+					
+					if (closed.indexOf(goal) > -1) {
+						return reconstructPath(start, goal);
+					}
+					
+					lastCurrent = current;
+				}
+				
+				if (closed.indexOf(goal) < 0) {
+					return null;
+				}
+			}
+			
+			if (!line.points) {
+				var AStarPath = getPathBetween(p1, p2, 
+					function heuristic(a, b) {
+						return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+					},
+					function walkable(x) { 
+						for (var i = 0; i < MooChip.scheme.components.length; i++) {
+							var bb = MooChip.scheme.components[i].entity.getBBox();
+							
+							if (Raphael.isPointInsideBBox(bb, x.x, x.y))
+								return false;
+						}
+						
+						return true;
+					}
+				);
+				
+				console.log('A* :: ', AStarPath);
+				
+				if (AStarPath) {
+					//line.points = AStarPath;
+					line.points = [];
+					
+					for (var i = AStarPath.length - 1; i > -1; i--) {
+						line.points.push(AStarPath[i]);
+					}
 				} else {
-					line.points = [ p1, p2 ];
+					var dx = Math.abs(p1.x - p2.x), dy = Math.abs(p1.y - p2.y);
+					
+					if (dx > 0 && dy > 0) {
+						var p3 = { x: p1.x, y: p2.y};
+						
+						for (var i = 0; i < MooChip.scheme.components.length; i++) {
+							var bbox = MooChip.scheme.components[i].entity.getBBox();
+							
+							if ((p3.x >= bbox.x && p3.x <= bbox.x + bbox.width && p3.y >= bbox.y && p3.y <= bbox.y + bbox.height) ||
+								Raphael.isBBoxIntersect({ x: p1.x, y: p1.y, x2: p3.x, y2: p3.y }, bbox) ||
+								Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p2.x, y2: p2.y }, bbox) ||
+								Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p1.x, y2: p1.y }, bbox) ||
+								Raphael.isBBoxIntersect({ x: p2.x, y: p2.y, x2: p3.x, y2: p3.y }, bbox)) 
+							{
+								p3 = { x: p2.x, y: p1.y};
+								break;
+							}
+						}
+						
+						line.points = [ p1, p3, p2 ];
+					} else {
+						line.points = [ p1, p2 ];
+					}
 				}
 			} else {
 				line.points[0] = p1;

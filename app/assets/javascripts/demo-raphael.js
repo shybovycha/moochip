@@ -25,8 +25,18 @@ function update_pin_meter(i, u) {
 
 function add(type) {
 	var generateName = function(type) {
-		var prefixes = { 'resistor': 'r', 'diode': 'vd', 'wire': '-', 'dc_source': 'src', 'pnp_transistor': 'vt', 'npn_transistor': 'vt'}, 
-			components = MooChip.scheme.components, cnt = 1;
+		var prefixes = 
+			{ 
+				'resistor': 'r', 
+				'diode': 'vd', 
+				'wire': '-', 
+				'dc_source': 'src', 
+				'pnp_transistor': 'vt', 
+				'npn_transistor': 'vt',
+				'capacitor': 'c',
+			}, 
+			components = MooChip.scheme.components, 
+			cnt = 1;
 		
 		for (var i = 0; i < components.length; i++) {
 			if (components[i].type == type) {
@@ -51,6 +61,10 @@ function add(type) {
 	} else
 	if (type == 'npn_transistor') {
 		var a = new NPNTransistor(generateName(type));
+		MooChip.scheme.add(a);
+	} else
+	if (type == 'capacitor') {
+		var a = new Capacitor(generateName(type));
 		MooChip.scheme.add(a);
 	} else
 	if (type == 'dc_source') {

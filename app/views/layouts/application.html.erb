@@ -8,13 +8,13 @@
 		<%= javascript_include_tag 'browser-detect.js' %>
 		
 		<% if (@demo == 'console') then %>
-			<title>Moochip - Console Demo</title>
+			<title>Moochip - JS Console simulation</title>
 			
 			<%= javascript_include_tag 'moochip.js' %>
 			<%= javascript_include_tag 'moochip-stdlib.js' %>
 			<%= javascript_include_tag 'demo-console.js' %>
 		<% elsif (@demo) then %>
-			<title>Moochip - Raphael Demo</title>
+			<title>Moochip - Simulator</title>
 			
 			<%= javascript_include_tag 'raphael.js' %>
 			<%= javascript_include_tag 'moochip-raphael.js' %>
