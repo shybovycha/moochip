@@ -162,12 +162,12 @@ function Pin(component, name)
 								this.connectionLine.points[this.pointIndex] = { 'x': x + (bbox.width / 2), 'y': y + (bbox.height / 2) };
 
 								if (MooChip.lightMode == false) {
-									MooChip.scheme.updateConnectionLines();
+									MooChip.scheme.updateConnectionLines(null, true);
 								}
 							},
 							
 							end = function(e) {
-								MooChip.scheme.updateConnectionLines();
+								MooChip.scheme.updateConnectionLines(null, true);
 							};
 						
 						r.drag(move, start, end);
@@ -516,8 +516,8 @@ function Scheme() {
 		}
 	};
 	
-	this.updateConnectionLines = function(component) {
-		var setPointsForConnectionLine = function(line) { 
+	this.updateConnectionLines = function(component, forceFlag) {
+		var setPointsForConnectionLine = function(line, forceFlag) { 
 			var p1 = line.pinA.getPos(), p2 = line.pinB.getPos();
 			
 			function getPathBetween(start, goal, h, isWalkable) {
@@ -680,10 +680,12 @@ function Scheme() {
 				return line.points;
 			};
 			
-			line.points = createConnectionLineRoutine(p1, p2);
+			if (!forceFlag || forceFlag != true) {
+				line.points = createConnectionLineRoutine(p1, p2);
+			}
 		};
 		
-		var routine = function(component) {
+		var routine = function(component, forceFlag) {
 			var pins = component.pins;
 		
 			if (!pins) {
@@ -701,7 +703,7 @@ function Scheme() {
 				for (var t = 0; t < lines.length; t++) {
 					var line = lines[t], path = '';
 					
-					setPointsForConnectionLine(line);
+					setPointsForConnectionLine(line, forceFlag);
 					
 					var pts = line.points;
 					
@@ -717,10 +719,10 @@ function Scheme() {
 		
 		if (!component) {
 			for (var i = 0; i < MooChip.scheme.components.length; i++) {
-				routine(MooChip.scheme.components[i]);
+				routine(MooChip.scheme.components[i], forceFlag);
 			}
 		} else {
-			routine(component);
+			routine(component, forceFlag);
 		}
 	}
 	
