@@ -15,6 +15,7 @@ Resistor = function(name, R) {
 	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
 	tmp.entity.push(MooChip.paper.path('M80,40L100,40'));
 	tmp.entity.component = tmp;
+	tmp.entity.forEach(function(e) { e.component = tmp; });
 
 	tmp.pinEntity = MooChip.paper.set();
 	
@@ -30,7 +31,7 @@ Resistor = function(name, R) {
 	
 	tmp.invoke = function(pin, I, U) {
 		if (pin == this.pin('a') && this.pin('b').src == 'negative') {
-			this.pin('b').i = I;
+			this.pin('b').i = U / this.R;
 			this.pin('b').u = U;
 			
 			console.log(this.name, '!');
@@ -39,7 +40,7 @@ Resistor = function(name, R) {
 			this.entity.glow({'color': MooChip.invokeGlowColor})
 		} else
 		if (pin == this.pin('b') && this.pin('a').src == 'negative') {
-			this.pin('a').i = I;
+			this.pin('a').i = U / this.R;
 			this.pin('a').u = U;
 			
 			console.log(this.name, '!');
@@ -74,6 +75,7 @@ Diode = function(name) {
 	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
 	tmp.entity.push(MooChip.paper.path('M60,40L80,40'));
 	tmp.entity.component = tmp;
+	tmp.entity.forEach(function(e) { e.component = tmp; });
 
 	tmp.pinEntity = MooChip.paper.set();
 	
@@ -122,6 +124,7 @@ Wire = function(name) {
 	tmp.entity = MooChip.paper.set();
 	tmp.entity.push(MooChip.paper.circle(50, 25, 15).attr({'fill': MooChip.paper.raphael.color('#4C698A')}));
 	tmp.entity.component = tmp;
+	tmp.entity.forEach(function(e) { e.component = tmp; });
 
 	tmp.pinEntity = MooChip.paper.set();
 	
@@ -185,6 +188,7 @@ DCSource = function(name, U, I) {
 	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
 	tmp.entity.push(MooChip.paper.path('M80,40L100,40'));
 	tmp.entity.component = tmp;
+	tmp.entity.forEach(function(e) { e.component = tmp; });
 	
 	tmp.pinEntity = MooChip.paper.set();
 	
@@ -240,6 +244,7 @@ PNPTransistor = function(name, h21e) {
 	tmp.entity.push(MooChip.paper.path('M60,40L60,20'));
 	tmp.entity.push(MooChip.paper.path('M60,80L60,100'));
 	tmp.entity.component = tmp;
+	tmp.entity.forEach(function(e) { e.component = tmp; });
 
 	tmp.pinEntity = MooChip.paper.set();
 	
@@ -308,6 +313,7 @@ NPNTransistor = function(name, h21e) {
 	tmp.entity.push(MooChip.paper.path('M60,40L60,20'));
 	tmp.entity.push(MooChip.paper.path('M60,80L60,100'));
 	tmp.entity.component = tmp;
+	tmp.entity.forEach(function(e) { e.component = tmp; });
 
 	tmp.pinEntity = MooChip.paper.set();
 	

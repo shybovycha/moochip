@@ -67,7 +67,7 @@ Raphael.st.getBBox = function() {
 			bb.y2 = e.y + e.height; 
 	});
 	
-	return { x: bb.x1, y: bb.y1, width: bb.x2 - bb.x1, height: bb.y2 - bb.y1};
+	return { x: bb.x1, y: bb.y1, x2: bb.x2, y2: bb.y2, width: bb.x2 - bb.x1, height: bb.y2 - bb.y1};
 };
 
 Raphael.st.rotate = function(degree) {
@@ -525,7 +525,23 @@ function Scheme() {
 				if (dx > 0 && dy > 0) {
 					var p3 = { x: p1.x, y: p2.y};
 					
+					for (var i = 0; i < MooChip.scheme.components.length; i++) {
+						var bbox = MooChip.scheme.components[i].entity.getBBox();
+						
+						if ((p3.x >= bbox.x && p3.x <= bbox.x + bbox.width && p3.y >= bbox.y && p3.y <= bbox.y + bbox.height) ||
+							Raphael.isBBoxIntersect({ x: p1.x, y: p1.y, x2: p3.x, y2: p3.y }, bbox) ||
+							Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p2.x, y2: p2.y }, bbox) ||
+							Raphael.isBBoxIntersect({ x: p3.x, y: p3.y, x2: p1.x, y2: p1.y }, bbox) ||
+							Raphael.isBBoxIntersect({ x: p2.x, y: p2.y, x2: p3.x, y2: p3.y }, bbox)) {
+							console.log("MOO");
+							p3 = { x: p2.x, y: p1.y};
+							break;
+						}
+					}
+					
 					line.points = [ p1, p3, p2 ];
+					
+					console.log('p1, p2, p3', [p1, p2, p3]);
 				} else {
 					line.points = [ p1, p2 ];
 				}

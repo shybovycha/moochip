@@ -53,6 +53,19 @@
 			
 			MooChip.paper = R;
 			MooChip.scheme = new Scheme();
+
+			MooChip.paper.x = MooChip.paper.x || 0;
+			MooChip.paper.y = MooChip.paper.y || 0;
+			MooChip.paper.width = MooChip.paper.width || 100;
+			MooChip.paper.height = MooChip.paper.height || 100;
+
+			MooChip.paper.orig_x = MooChip.paper.x;
+			MooChip.paper.orig_y = MooChip.paper.y;
+			MooChip.paper.orig_width = MooChip.paper.width;
+			MooChip.paper.orig_height = MooChip.paper.height;
+
+			MooChip.paper.zoom_level = 1;
+			MooChip.paper.zoom_step = 1.0 / 10.0;
 		};
 		
 		function add(type) {
@@ -110,6 +123,28 @@
 		function full_step() {
 			MooChip.scheme.fullCircuitStep();
 		}
+
+		function zoom_out() {
+			MooChip.paper.zoom_level -= MooChip.paper.zoom_step * 100;
+			MooChip.paper.setViewBox(MooChip.paper.orig_x + MooChip.paper.zoom_level,
+				MooChip.paper.orig_y + MooChip.paper.zoom_level,
+				MooChip.paper.orig_width,
+				MooChip.paper.orig_height,
+				false);
+		}
+
+		function zoom_in() {
+			MooChip.paper.zoom_level += MooChip.paper.zoom_step * 100;
+			MooChip.paper.setViewBox(MooChip.paper.orig_x + MooChip.paper.zoom_level,
+				MooChip.paper.orig_y + MooChip.paper.zoom_level,
+				MooChip.paper.orig_width,
+				MooChip.paper.orig_height,
+				false);
+		}
+
+		function pan_mode() {
+			
+		}
         </script>
     </head>
 	
@@ -127,6 +162,10 @@
 				<a href="#" onclick="reset_scheme()" title="stop any executions and reset components' states">reset</a>
 				<a href="#" onclick="simple_step()" title="step execution one component along">simple step</a>
 				<a href="#" onclick="full_step()" title="step execution all components at once">full step</a>
+				&nbsp;|&nbsp;
+				<a href="#" onclick="zoom_out()" title="stop any executions and reset components' states">zoom out</a>
+				<a href="#" onclick="zoom_in()" title="step execution one component along">zoom in</a>
+				<a href="#" onclick="pan_mode()" title="step execution all components at once">pan sheet</a>
 			</div>
 			
 			
