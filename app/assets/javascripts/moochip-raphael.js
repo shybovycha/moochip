@@ -626,7 +626,9 @@ function Scheme() {
 				}
 			}
 			
-			if (!line.points) {
+			var createConnectionLineRoutine = function(p1, p2) {
+				var line = [];
+				
 				var AStarPath = getPathBetween(p1, p2, 
 					function heuristic(a, b) {
 						return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
@@ -643,10 +645,7 @@ function Scheme() {
 					}
 				);
 				
-				console.log('A* :: ', AStarPath);
-				
 				if (AStarPath) {
-					//line.points = AStarPath;
 					line.points = [];
 					
 					for (var i = AStarPath.length - 1; i > -1; i--) {
@@ -677,10 +676,11 @@ function Scheme() {
 						line.points = [ p1, p2 ];
 					}
 				}
-			} else {
-				line.points[0] = p1;
-				line.points[line.points.length - 1] = p2;
-			}
+				
+				return line.points;
+			};
+			
+			line.points = createConnectionLineRoutine(p1, p2);
 		};
 		
 		var routine = function(component) {
