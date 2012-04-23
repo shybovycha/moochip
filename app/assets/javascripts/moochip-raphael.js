@@ -257,7 +257,7 @@ function Pin(component, name)
 
 				this.updatePoints();
 				
-				MooChip.scheme.updateConnectionLines();
+				MooChip.scheme.updateConnectionLines(null, true);
 			});
 			
 			MooChip.scheme.connectionLines.push(line);
