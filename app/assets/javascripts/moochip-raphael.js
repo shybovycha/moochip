@@ -978,14 +978,6 @@ function Scheme() {
 		for (var t = 0; t < _it.length; t++) {
 			if ((_it[t].component == this.src && _it[t].name == 'negative') || _it[t] == _negativeSrcPin) {
 				console.log('src reached!');
-				
-				/*for (var i = 0; i < this.components.length; i++) {
-					if (this.components[i].entity.unglow) {
-						this.components[i].entity.unglow();
-					}
-				}*/
-				
-				// return;
 			}
 		}
 		
@@ -1102,12 +1094,14 @@ function Scheme() {
 				for (var t = 0; t < component.pins.length; t++) {
 					var pin = component.pins[t];
 					
-					if (!pin.i || !pin.u)
+					if (!pin.i || !pin.u) {
 						loopControlFlCheck++;
+						component.entity.unglow();
+					}
 				}
 			}
 			
-			if (loopControlFl == loopControlFlCheck) {
+			if (loopControlFl <= loopControlFlCheck) {
 				console.log('No component changes - stopping forward iterations');
 				console.log('Queue left: ', this.queue);
 				return;
