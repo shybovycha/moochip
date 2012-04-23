@@ -563,7 +563,7 @@ function Scheme() {
 						return reconstructPath(start, goal);
 					}
 					
-					if (lastCurrent && lastCurrent.f < current.f) {
+					if (lastCurrent && lastCurrent.f < current.f && lastCurrent.h < (2 * MooChip.gridSize)) {
 						goal.cameFrom = lastCurrent;
 						closed.push(goal);
 						return reconstructPath(start, goal);
@@ -585,7 +585,9 @@ function Scheme() {
 						if (temp[i].x < 0 || temp[i].y < 0 || temp[i].x > MooChip.paper.width || temp[i].y > MooChip.paper.height) {
 							continue;
 						}
-							
+						
+						temp[i].cameFrom = current;
+
 						if (closed.indexOf(temp[i]) > -1 || !isWalkable(temp[i])) {
 							continue;
 						}
@@ -633,11 +635,11 @@ function Scheme() {
 					function heuristic(a, b) {
 						return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 					},
-					function walkable(x) { 
+					function walkable(p) { 
 						for (var i = 0; i < MooChip.scheme.components.length; i++) {
-							var bb = MooChip.scheme.components[i].entity.getBBox();
+							var bb = MooChip.scheme.components[i].entity.getBBox(), p2 = p.cameFrom;
 							
-							if (Raphael.isPointInsideBBox(bb, x.x, x.y))
+							if (Raphael.isPointInsideBBox(bb, p.x, p.y) || Raphael.isPointInsideBBox(bb, (p2.x - p.x) / 2, (p2.y - p.y) / 2))
 								return false;
 						}
 						
