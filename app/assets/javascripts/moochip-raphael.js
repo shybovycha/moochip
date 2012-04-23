@@ -217,7 +217,7 @@ function Pin(component, name)
 							
 							this.remove();
 							
-							MooChip.scheme.updateConnectionLines();
+							MooChip.scheme.updateConnectionLines(null, true);
 						});
 						
 						this.pointEntities.push(r);
@@ -356,6 +356,7 @@ function Component(type, name)
 	
 	this.entity = null;
 	this.pinEntity = null;
+	this.textEntity = null;
 	
 	this.rotate = function(degree) {
 		this.entity.rotate(degree);
@@ -368,14 +369,20 @@ function Component(type, name)
 	};
 	
 	this.updateDragFunctions = function() {
-		var entity = this.entity, pinEntity = this.pinEntity, name = this.name,
+		var entity = this.entity, pinEntity = this.pinEntity, textEntity = this.textEntity, name = this.name,
 		
 		start = function() {
 			entity.oBB = entity.getBBox();
 			pinEntity.oBB = pinEntity.getBBox();
 			
+			if (textEntity)
+				textEntity.oBB = textEntity.getBBox();
+			
 			entity.attr({ 'opacity': 0.25});
 			pinEntity.attr({ 'opacity': 0.25});
+			
+			if (textEntity)
+				textEntity.attr({ 'opacity': 0.25});
 			
 			if (MooChip.lightMode)
 				MooChip.scheme.hideConnectionLines(entity.component);
@@ -386,6 +393,9 @@ function Component(type, name)
 			
 			entity.transform(transformStr);
 			pinEntity.transform(transformStr);
+			
+			if (textEntity)
+				textEntity.transform(transformStr);
 			
 			if (entity.selectionRect)
 				entity.selectionRect.transform(transformStr);
@@ -402,6 +412,9 @@ function Component(type, name)
 		up = function() {
 			entity.attr({ 'opacity': 1.0});
 			pinEntity.attr({ 'opacity': 1.0});
+			
+			if (textEntity)
+				textEntity.attr({ 'opacity': 1.0});
 			
 			MooChip.scheme.showConnectionLines(entity.component);
 			
@@ -790,7 +803,6 @@ function Scheme() {
 		}
 		
 		this.selectedConnectionLine.remove();
-		
 		this.updateConnectionLines();
 	}
 	
@@ -805,6 +817,9 @@ function Scheme() {
 			component.entity.remove();
 			
 		if (component.pinEntity)
+			component.pinEntity.remove();
+			
+		if (component.textEntity)
 			component.pinEntity.remove();
 			
 		for (var i = 0; i < component.pins.length; i++) {
@@ -887,6 +902,7 @@ function Scheme() {
 			for (var t = 0; t < component.pins.length; t++) {
 				component.pins[t].i = null;
 				component.pins[t].u = null;
+				component.pins[t].src = null;
 			}
 		}
 		
@@ -896,8 +912,14 @@ function Scheme() {
 	this.isSrcNegativeReachable = function(pin, src) {
 		var q = [ pin ], v = [];
 		
+		if (!pin.connections || pin.connections.length < 1)
+			return false;
+		
 		while (q.length > 0) {
 			var p = q.shift();
+			
+			if (!p.connections || p.connections.length < 1)
+				continue;
 			
 			if (v.indexOf(p) > -1 || p == src.pin('positive'))
 				continue;
@@ -957,11 +979,13 @@ function Scheme() {
 			if ((_it[t].component == this.src && _it[t].name == 'negative') || _it[t] == _negativeSrcPin) {
 				console.log('src reached!');
 				
-				for (var i = 0; i < this.components.length; i++) {
+				/*for (var i = 0; i < this.components.length; i++) {
 					if (this.components[i].entity.unglow) {
 						this.components[i].entity.unglow();
 					}
-				}
+				}*/
+				
+				// return;
 			}
 		}
 		

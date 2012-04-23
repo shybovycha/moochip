@@ -10,6 +10,8 @@ Resistor = function(name, R) {
 	var a = new Pin(tmp, 'b')
 	tmp.pins.push(a);
 	
+	tmp.textEntity = MooChip.paper.text(40, 60, name).attr({ 'font-size': 16 });
+	
 	tmp.entity = MooChip.paper.set();
 	tmp.entity.push(MooChip.paper.rect(40, 30, 40, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
 	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
@@ -68,6 +70,8 @@ Diode = function(name) {
 	
 	tmp.pins.push(new Pin(tmp, 'anode'));
 	tmp.pins.push(new Pin(tmp, 'cathode'));
+	
+	tmp.textEntity = MooChip.paper.text(30, 70, name).attr({ 'font-size': 16 });
 	
 	tmp.entity = MooChip.paper.set();
 	tmp.entity.push(MooChip.paper.path('M40,25L40,55L60,40L40,25z').attr({'fill': MooChip.paper.raphael.color('#fff')}));
@@ -238,6 +242,8 @@ PNPTransistor = function(name, h21e) {
 	var a = new Pin(tmp, 'emitter')
 	tmp.pins.push(a);
 	
+	tmp.textEntity = MooChip.paper.text(15, 30, name).attr({ 'font-size': 16 });
+	
 	tmp.entity = MooChip.paper.set();
 	tmp.entity.push(MooChip.paper.circle(50, 60, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
 	tmp.entity.push(MooChip.paper.path('M40,43L40,77'));
@@ -307,6 +313,8 @@ NPNTransistor = function(name, h21e) {
 	var a = new Pin(tmp, 'emitter')
 	tmp.pins.push(a);
 	
+	tmp.textEntity = MooChip.paper.text(15, 30, name).attr({ 'font-size': 16 });
+	
 	tmp.entity = MooChip.paper.set();
 	tmp.entity.push(MooChip.paper.circle(50, 60, 20).attr({'fill': MooChip.paper.raphael.color('#fff')}));
 	tmp.entity.push(MooChip.paper.path('M40,43L40,77'));
@@ -367,6 +375,8 @@ Capacitor = function(name) {
 	
 	tmp.pins.push(new Pin(tmp, 'a'));
 	tmp.pins.push(new Pin(tmp, 'b'));
+	
+	tmp.textEntity = MooChip.paper.text(30, 60, name).attr({ 'font-size': 16 });
 	
 	tmp.entity = MooChip.paper.set();
 	tmp.entity.push(MooChip.paper.path('M40,40L20,40'));
@@ -472,6 +482,7 @@ Capacitor = function(name) {
 			
 			console.log(this.name, '! (shadow)');
 			
+			this.entity.unglow();
 			this.entity.glow({'color': MooChip.afterSimulationInvokeGlowColor});
 		}
 	};
