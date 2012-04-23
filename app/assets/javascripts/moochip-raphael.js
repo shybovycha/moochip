@@ -68,7 +68,32 @@ Raphael.st.getBBox = function() {
 			bb.y2 = e.y + e.height; 
 	});
 	
-	return { x: bb.x1, y: bb.y1, x2: bb.x2, y2: bb.y2, width: bb.x2 - bb.x1, height: bb.y2 - bb.y1};
+	return { 
+		x: bb.x1, 
+		y: bb.y1, 
+		x2: bb.x2, 
+		y2: bb.y2, 
+		width: bb.x2 - bb.x1, 
+		height: bb.y2 - bb.y1, 
+		extend: function(bbox) {
+			if (bbox.x < this.x)
+				this.x = bbox.x;
+				
+			if (bbox.y < this.y)
+				this.y = bbox.y;
+				
+			if (bbox.x2 > this.x2)
+				this.x2 = bbox.x2;
+				
+			if (bbox.y2 > this.y2)
+				this.y2 = bbox.y2;
+				
+			this.width = this.x2 - this.x;
+			this.height = this.y2 - this.y;
+			
+			return this;
+		}
+	};
 };
 
 Raphael.st.rotate = function(degree) {
@@ -563,6 +588,10 @@ function Scheme() {
 						return reconstructPath(start, goal);
 					}
 					
+					if (opened.length > 2000 || closed.length > 2000) {
+						return null;
+					}
+					
 					if (lastCurrent && lastCurrent.f < current.f && lastCurrent.h < (2 * MooChip.gridSize)) {
 						goal.cameFrom = lastCurrent;
 						closed.push(goal);
@@ -636,8 +665,10 @@ function Scheme() {
 						return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 					},
 					function walkable(p) { 
-						for (var i = 0; i < MooChip.scheme.components.length; i++) {
-							var bb = MooChip.scheme.components[i].entity.getBBox(), p2 = p.cameFrom;
+						var components = MooChip.scheme.components;
+						
+						for (var i = 0; i < components.length; i++) {
+							var bb = components[i].entity.getBBox().extend(components[i].pinEntity.getBBox()), p2 = p.cameFrom;
 							
 							if (Raphael.isPointInsideBBox(bb, p.x, p.y) || Raphael.isPointInsideBBox(bb, (p2.x - p.x) / 2, (p2.y - p.y) / 2))
 								return false;
