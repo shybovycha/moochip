@@ -820,7 +820,7 @@ function Scheme() {
 			component.pinEntity.remove();
 			
 		if (component.textEntity)
-			component.pinEntity.remove();
+			component.textEntity.remove();
 			
 		for (var i = 0; i < component.pins.length; i++) {
 			var pin = component.pins[i];
