@@ -29,7 +29,7 @@ class HomeController < ApplicationController
 		render :json => []
 	end
 	
-	@words = @query.split(/\s+/)
+	@words = @query.split(/\s+/).collect { |e| e.downcase }
 	@word_combinations = []
 	
 	1.upto @words.size do |i|
@@ -46,7 +46,7 @@ class HomeController < ApplicationController
 	Rails.logger.debug("Search query: #{ @query.inspect }")
 	Rails.logger.debug("Word combinations: #{ @word_combinations.inspect }")
 	
-	@articles = Article.where((['title like ? or body like ?'] * (@word_combinations.size / 2)).join(' or '), *@word_combinations)
+	@articles = Article.where((['lower(title) like ? or lower(body) like ?'] * (@word_combinations.size / 2)).join(' or '), *@word_combinations)
 	
 	Rails.logger.debug("Articles found: #{ @articles.inspect }")
 	
