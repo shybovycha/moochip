@@ -35,6 +35,12 @@
 				</em>
 			</em>
 		</div>
+		
+		<div class="top-menu-panel">
+			<a href="javascript:save_scheme_svg();" title="View scheme as SVG">
+				<%= image_tag 'buttons/eye.png' %>
+			</a>
+		</div>
 	</div>
 
 	<div id="scheme-holder"></div>
@@ -42,15 +48,12 @@
 
 <div class="help-container">
 	<div class="search-bar">
-		<input type="text" name="search-query" />
-		<input type="button" name="search-button" value="search" />
+		<%= form_tag '/search', :method => 'get', :onsubmit => 'return article_search();' do %>
+			<%= text_field_tag 'search-query' %>
+			<%= submit_tag 'submit' %>
+		<% end %>
 	</div>
 	
 	<div class="help-panel">
-		<%= image_tag 'components/diode.png' %>
-		<br />
-		<strong>Diode</strong> has two pins - <em>anode</em> and <em>cathode</em>.
-		It conducts current from anode to cathode and does not conduct current
-		backwards.
 	</div>
 </div>

@@ -3,9 +3,10 @@
 	<head>
 		<meta charset="utf-8" />
 
-		<%= stylesheet_link_tag    "application", :media => "all" %>
+		<%= stylesheet_link_tag "application.css", :media => "all" %>
 		
 		<%= javascript_include_tag 'browser-detect.js' %>
+		<%= javascript_include_tag 'jquery-1.7.2.js' %>
 		
 		<% if (@demo == 'console') then %>
 			<title>Moochip - JS Console simulation</title>

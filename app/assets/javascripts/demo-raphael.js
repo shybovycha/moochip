@@ -11,6 +11,7 @@ window.onload = function () {
 	MooChip.paper = R;
 	MooChip.scheme = new Scheme();
 	MooChip.updatePinMeter = update_pin_meter;
+	MooChip.paper.canvas.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 };
 
 function update_pin_meter(i, u) {
@@ -100,4 +101,28 @@ function simple_step() {
 
 function full_step() {
 	MooChip.scheme.fullCircuitStep();
+}
+
+function article_search() {
+	var query = jQuery('[name=search-query]:text').val();
+	
+	jQuery.getJSON('/search/' + query, function(data) {
+		if (data) {
+			var html = '';
+			
+			for (var i = 0; i < data.length; i++) {
+				html += '<h2>' + data[i].title + '</h2>' + data[i].body + '<hr />';
+			}
+
+			jQuery('.help-panel').html(html);
+		} else {
+			jQuery('.help-panel').html('Nothing found.');
+		}
+	});
+	
+	return false;
+}
+
+function save_scheme_svg() {
+	open('data:image/svg+xml,' + jQuery('#scheme-holder').html());
 }

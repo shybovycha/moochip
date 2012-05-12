@@ -21,4 +21,35 @@ class HomeController < ApplicationController
 	This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 	"""
   end
+  
+  def search
+	@query = params[:query]
+	
+	if (!@query or @query.empty?) then
+		render :json => []
+	end
+	
+	@words = @query.split(/\s+/)
+	@word_combinations = []
+	
+	1.upto @words.size do |i|
+		tmp = []
+		p = @words.permutation(i).to_a
+		
+		p.each { |e| tmp += ['%' + e.join('%') + '%'] * 2 }
+		
+		@word_combinations << tmp
+	end
+	
+	@word_combinations.flatten!
+	
+	Rails.logger.debug("Search query: #{ @query.inspect }")
+	Rails.logger.debug("Word combinations: #{ @word_combinations.inspect }")
+	
+	@articles = Article.where((['title like ? or body like ?'] * (@word_combinations.size / 2)).join(' or '), *@word_combinations)
+	
+	Rails.logger.debug("Articles found: #{ @articles.inspect }")
+	
+	render :json => @articles
+  end
 end
