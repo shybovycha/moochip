@@ -681,7 +681,7 @@ function Scheme() {
 						var components = MooChip.scheme.components;
 						
 						for (var i = 0; i < components.length; i++) {
-							var bb = components[i].entity.getBBox().extend(components[i].pinEntity.getBBox()), p2 = p.cameFrom;
+							var bb = components[i].entity.getBBox().extend(components[i].pinEntity.getBBox()).extend(components[i].textEntity.getBBox()), p2 = p.cameFrom;
 							
 							if (Raphael.isPointInsideBBox(bb, p.x, p.y) || Raphael.isPointInsideBBox(bb, (p2.x - p.x) / 2, (p2.y - p.y) / 2))
 								return false;
