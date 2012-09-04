@@ -1,0 +1,9 @@
+The first check gave me this:
+
+bc..
+Line 277, Column 4: No p element in scope but a p end tag seen.
+
+</p>
+
+p. To fix this, i simply refactored @app/views/home/index.html.erb@ to replace @<p>@ tags with @<div>@. 
+Then no errors or warnings (on document, only @you are using experimental validator feature@ one) appeared.
