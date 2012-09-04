@@ -1,0 +1,9 @@
+h1. mooChip
+
+h2. Brief overview
+
+This is a Web-Application that should help students learn how
+electronic circuits work.
+
+Blah-blah-blah, just go and read that huge manual at *"http://moochip.heroku.com/":http://moochip.heroku.com/*
+or simply look through @/app/views/home/index.html.erb@.
