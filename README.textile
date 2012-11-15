@@ -1,7 +1,6 @@
 h1. mooChip
 
-!https://secure.travis-ci.org/jnicklas/carrierwave.png(Build Status)!:http://travis-ci.org/
-!https://codeclimate.com/badge.png(Code Quality)!:https://codeclimate.com/github/jnicklas/carrierwave
+!https://secure.travis-ci.org/shybovycha/moochip.png(Build Status)!:http://travis-ci.org/shybovycha/moochip
 
 h2. Brief overview
 
