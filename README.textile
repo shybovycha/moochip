@@ -1,5 +1,8 @@
 h1. mooChip
 
+!https://secure.travis-ci.org/jnicklas/carrierwave.png(Build Status)!:http://travis-ci.org/
+!https://codeclimate.com/badge.png(Code Quality)!:https://codeclimate.com/github/jnicklas/carrierwave
+
 h2. Brief overview
 
 This is a Web-Application that should help students learn how
